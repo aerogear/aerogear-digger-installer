@@ -7,7 +7,7 @@
 
 -
   name: "Set default config directory"
-  set_fact: config_file_dir="/opt/rhmap/{{ rhmap_version }}/rhmap-installer/roles/feedhenry.buildfarm-installer/templates"
+  set_fact: config_file_dir="/opt/rhmap/{{ rhmap_version }}/rhmap-installer/roles/digger-installer/android-sdk/templates"
   when: config_file_dir is not defined
 
 - name: "Create project"

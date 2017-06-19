@@ -1,5 +1,5 @@
 
-# Ansible Roles for installing Aerogear Digger
+# Ansible Roles for installing AeroGear Digger
 
 
 ## Requirements
