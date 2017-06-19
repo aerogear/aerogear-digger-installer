@@ -90,7 +90,7 @@
   register: jenkins_podname
 -
   name: "Get jenkins password"
-  shell: 'oc env pod {{ jenkins_podname }} --list | grep JENKINS_PASSWORD | tr -d JENKINS_PASSWORD='
+  shell: "oc env pod {{ jenkins_podname.stdout }} --list | grep JENKINS_PASSWORD | awk -F '=' '{ print $2 }'"
   register: jenkins_password
 
 -
