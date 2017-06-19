@@ -1,8 +1,8 @@
 ---
 galaxy_info:
-  author: Feedhenry
-  company: Feedhenry
-  description: "Roles for deploying the Feedhenry Build-Farm-2"
+  author: aerogear
+  company: aerogear
+  description: "Role for deploying the aerogear digger android-sdk pod"
   license: "license (Apache 2)"
   min_ansible_version: "2.2.0"
   platforms:
