@@ -1,0 +1,10 @@
+---
+
+project_name: jenkins
+
+rhmap_version: 4.5
+# or
+buildfarm_templates_dir: /path/to/buildfarm_templates_dir
+config_file_dir: /path/to/config_file_dir
+
+

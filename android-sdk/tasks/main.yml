@@ -1,0 +1,106 @@
+---
+## setup default template directories
+-
+  name: "Set default template directory"
+  set_fact: buildfarm_templates_dir="/opt/rhmap/{{ rhmap_version }}/buildfarm/templates"
+  when: buildfarm_templates_dir is not defined
+
+-
+  name: "Set default config directory"
+  set_fact: config_file_dir="/opt/rhmap/{{ rhmap_version }}/rhmap-installer/roles/feedhenry.buildfarm-installer/templates"
+  when: config_file_dir is not defined
+
+- name: "Create project"
+  command: "oc new-project {{ project_name }}"
+  register: create_project_result
+  failed_when: create_project_result.stderr and create_project_result.stderr != '' and 'already_exists' not in create_project_result.stderr
+  changed_when: create_project_result.rc == 0 or (create_project_result == 1 and 'created' in create_project_result.stdout)
+
+-
+  name: "Deploy the Android SDK image"
+  command: "oc new-app -f {{ buildfarm_templates_dir }}/android-sdk-persistent-template.json"
+  register: android_create_result
+  failed_when:
+    - android_create_result.stderr and android_create_result.stderr != '' and 'already exists' not in android_create_result.stderr
+  changed_when: android_create_result.rc == 0 or (android_create_result.rc == 1 and 'created' in android_create_result.stdout)
+
+
+-
+  include: poller.yml pause_for={{ buildfarm.pause_for | default('20') }}
+  when: android_create_result|changed
+
+
+-
+  name: "Get the Android SDK pod name"
+  shell: "oc get pods --namespace={{ project_name }} | grep android-sdk | awk '{print$1}'"
+  register: output
+
+-
+  name: register android-sdk pod name"
+  set_fact:
+    android_sdk_podname: "{{ output.stdout }}"
+
+
+# install the config file
+
+
+-
+  name: "Copy the Android SDK config file to the container"
+  command: "oc cp {{ config_file_dir }}/sample_cfg.j2 {{ android_sdk_podname }}:/opt/tools/sample.cfg"
+  become: true
+  register: output
+  failed_when: output.stdout != ""
+
+-
+  name: "Install the Android SDK"
+  command: "oc rsh {{ android_sdk_podname }} androidctl sdk install"
+
+# sync using the config file
+
+-
+  name: "Sync Android Platform Versions via config"
+  command: "oc rsh {{ android_sdk_podname }} androidctl sync /opt/tools/sample.cfg"
+  register: output
+  become: true
+  failed_when: "'Traceback' in output.stdout"
+
+- name: 
+  set_fact: accept=true
+  when: "'Accept?' in output.stdout"
+
+- debug: var=accept
+
+- pause:
+    prompt: "Licences are up to date. Hit enter to continue with the playbook "
+  when: accept is undefined
+
+- pause:
+    prompt:  "{{ output.stdout }} Hit enter to accept the Licence or hit Ctrl _c and 'A' to reject and cancel the installation "
+  when: accept is defined and accept
+
+- name: "Accepting the licence"
+  command: "oc rsh {{ android_sdk_podname }} androidctl -y sync /opt/tools/sample.cfg"
+  when: accept is defined and accept
+-
+  name: "Get jenkins url"
+  shell: "oc get routes | grep jenkins | awk '{print $2}'"
+  register: jenkins_url
+
+-
+  name: "Get jenkins pod"
+  shell: "oc get pods --namespace={{ project_name }} | grep jenkins | awk '{print$1}'"
+  register: jenkins_podname
+-
+  name: "Get jenkins password"
+  shell: 'oc env pod {{ jenkins_podname }} --list | grep JENKINS_PASSWORD | tr -d JENKINS_PASSWORD='
+  register: jenkins_password
+
+-
+  name: "How to login"
+  shell: "echo 'Your new jenkins instance is available at {{ jenkins_url.stdout }}.
+          Your login credentials are username=admin password={{ jenkins_password.stdout }}'"
+  register: output
+
+-
+  debug: var=output.stdout_lines
+  when: output|changed

@@ -1,0 +1,12 @@
+---
+galaxy_info:
+  author: Feedhenry
+  company: Feedhenry
+  description: "Roles for deploying the Feedhenry Build-Farm-2"
+  license: "license (Apache 2)"
+  min_ansible_version: "2.2.0"
+  platforms:
+    -
+      name: fedora
+      version:
+        - 25
