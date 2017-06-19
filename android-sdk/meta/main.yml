@@ -1,8 +1,8 @@
 ---
 galaxy_info:
-  author: aerogear
-  company: aerogear
-  description: "Role for deploying the aerogear digger android-sdk pod"
+  author: AeroGear
+  company: AeroGear
+  description: "Role for deploying the AeroGear digger android-sdk pod"
   license: "license (Apache 2)"
   min_ansible_version: "2.2.0"
   platforms:
