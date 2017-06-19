@@ -2,7 +2,7 @@
 ## setup default template directories
 -
   name: "Set default template directory"
-  set_fact: buildfarm_templates_dir="/opt/rhmap/{{ rhmap_version }}/buildfarm/templates"
+  set_fact: buildfarm_templates_dir="/opt/rhmap/{{ rhmap_version }}/templates/buildfarm"
   when: buildfarm_templates_dir is not defined
 
 -
