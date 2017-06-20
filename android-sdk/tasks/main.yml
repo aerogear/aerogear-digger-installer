@@ -47,7 +47,6 @@
 -
   name: "Copy the Android SDK config file to the container"
   command: "oc cp {{ config_file_dir }}/sample_cfg.j2 {{ android_sdk_podname }}:/opt/tools/sample.cfg"
-  become: true
   register: output
   failed_when: output.stdout != ""
 
@@ -61,7 +60,6 @@
   name: "Sync Android Platform Versions via config"
   command: "oc rsh {{ android_sdk_podname }} androidctl sync /opt/tools/sample.cfg"
   register: output
-  become: true
   failed_when: "'Traceback' in output.stdout"
 
 - name: 
