@@ -54,9 +54,9 @@
 # install the config file
 -
   name: "Copy the Android SDK config file to the container"
-  command: "oc cp {{ config_file_dir }}/sample_cfg.j2 {{ android_sdk_podname }}:/opt/tools/sample.cfg"
-  register: output
-  failed_when: output.stdout != ""
+  command: "oc cp --namespace={{ project_name }} /tmp/{{ config_file }} {{ android_sdk_podname }}:/opt/tools/{{ config_file }}"
+  register: cp_cmd
+  failed_when: cp_cmd.stdout != ""
 
 -
   name: "Install the Android SDK"
