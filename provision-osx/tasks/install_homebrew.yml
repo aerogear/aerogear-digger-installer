@@ -1,0 +1,95 @@
+---
+
+- 
+  name: Check homebrew directory permissions
+  file:
+    path: "{{ homebrew_prefix }}"
+    owner: root
+    group: admin
+    state: directory
+    mode: 0775
+  become: yes
+
+- 
+  name: Check homebrew directory exists
+  file:
+    path: "{{ homebrew_install_path }}"
+    owner: "{{ ansible_ssh_user }}"
+    group: admin
+    state: directory
+    mode: 0775
+  become: yes
+
+- 
+  name: Install homebrew
+  git:
+    repo: "{{ homebrew_repo }}"
+    version: "{{ homebrew_version | default('master') }}"
+    dest: "{{ homebrew_install_path }}"
+    update: no
+    accept_hostkey: yes
+    depth: 1
+  environment:
+    http_proxy: "{{ proxy_url | default('') }}"
+    https_proxy: "{{ proxy_url | default('') }}"
+
+- 
+  name: Check permissions on homebrew_brew_bin_path
+  file:
+    path: "{{ homebrew_brew_bin_path }}"
+    state: directory
+    owner: "{{ ansible_ssh_user }}"
+    group: admin
+    mode: 0775
+  become: yes
+
+- 
+  name: Check permissions on homebrew_install_path
+  file:
+    path: "{{ homebrew_install_path }}"
+    state: directory
+    owner: "{{ ansible_ssh_user }}"
+    group: admin
+    recurse: true
+  become: yes
+
+- 
+  name: Check if homebrew binary is already in place.
+  stat: "path={{ homebrew_brew_bin_path }}/brew"
+  register: homebrew_binary
+
+- 
+  name: Symlink brew
+  file:
+    src: "{{ homebrew_install_path }}/bin/brew"
+    dest: "{{ homebrew_brew_bin_path }}/brew"
+    state: link
+  when: homebrew_binary.stat.exists == false
+  become: yes
+
+- 
+  name: Brew update
+  command: "{{ homebrew_brew_bin_path }}/brew update --force"
+  when: homebrew_binary.stat.exists == false
+  environment:
+    http_proxy: "{{ proxy_url | default('') }}"
+    https_proxy: "{{ proxy_url | default('') }}"
+
+- 
+  name: Ensure taps are added
+  homebrew_tap: "tap={{ item }} state=present"
+  with_items: "{{ homebrew_taps }}"
+  environment:
+    http_proxy: "{{ proxy_url | default('') }}"
+    https_proxy: "{{ proxy_url | default('') }}"
+
+- 
+  name: Install homebrew packages
+  homebrew:
+    name: "{{ item.name | default(item) }}"
+    install_options: "{{ item.install_options | default(omit) }}"
+    state: present
+  with_items: "{{ homebrew_packages }}"
+  environment:
+    http_proxy: "{{ proxy_url | default('') }}"
+    https_proxy: "{{ proxy_url | default('') }}"

@@ -1,0 +1,72 @@
+---
+
+-
+  name: Get current user groups
+  shell: groups
+  args:
+    executable: /bin/bash
+  register: user_groups
+
+-
+  name: Ensure passwordless sudo for user
+  become: yes
+  replace:
+    dest: /etc/sudoers
+    regexp: '^# %wheel ALL=\(ALL\) NOPASSWD: ALL'
+    replace: '%wheel ALL=(ALL) NOPASSWD: ALL'
+    validate: visudo -cf %s
+
+-
+  name: Add sudoers users to wheel group
+  become: yes
+  user:
+    name: "{{ ansible_ssh_user }}"
+    groups: wheel
+    append: yes
+
+-
+  name: Install command line tools
+  shell: source ~/.bash_profile && xcversion install-cli-tools
+  args:
+    executable: /bin/bash
+  register: xcode_cli_tools_install
+  when: xcode_install_user is defined and xcode_install_password is defined
+  failed_when: xcode_cli_tools_install.rc != 1 and xcode_cli_tools_install.stdout.find('already installed') == -1
+  changed_when: xcode_cli_tools_install.stdout.find('already installed') == -1
+  environment:
+    XCODE_INSTALL_USER: "{{ xcode_install_user }}"
+    XCODE_INSTALL_PASSWORD: "{{ xcode_install_password }}"
+    FASTLANE_SESSION: "{{ xcode_install_session_token }} | default(omit)"
+
+- debug:
+    msg: "Installing Xcode ({{ xcode_versions | join(', ') }}). This may take over 30 minutes for each version. Please be patient."
+
+# Check here for versions already installed
+-
+  name: Install xcode versions
+  shell: "source ~/.bash_profile && xcversion install {{ item }}"
+  args:
+    executable: /bin/bash
+  with_items: "{{ xcode_versions }}"
+  when: xcode_install_user is defined and xcode_install_password is defined
+  register: xcode_install
+  environment:
+    XCODE_INSTALL_USER: "{{ xcode_install_user }}"
+    XCODE_INSTALL_PASSWORD: "{{ xcode_install_password }}"
+
+-
+  name: Remove passwordless sudo for user
+  become: yes
+  replace:
+    dest: /etc/sudoers
+    regexp: '^%wheel ALL=\(ALL\) NOPASSWD: ALL'
+    replace: '# %wheel ALL=(ALL) NOPASSWD: ALL'
+    validate: visudo -cf %s
+
+-
+  name: Restore user groups
+  become: yes
+  user:
+    name: "{{ ansible_ssh_user }}"
+    groups: "{{ user_groups.stdout.split(' ') | join(',') }}"
+    append: no

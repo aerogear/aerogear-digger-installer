@@ -28,3 +28,5 @@ digger_platforms="android,ios"
 
 [core]
 10.32.241.238
+
+[macos]

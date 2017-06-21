@@ -24,3 +24,5 @@ deployments:
     containers:
     - name: "android-sdk"
       image: "docker.io/aerogear/android-sdk:dev"
+
+macos_user: jenkins

@@ -18,3 +18,11 @@
     - {role: configure-buildfarm, tags: configure-buildfarm}
   vars_files:
     - "vars/buildfarm.yml"
+
+- name: "Deploy macOS node"
+  hosts: macos
+  remote_user: "{{ macos_user }}"
+  roles:
+    - {role: provision-osx, tags: provision-osx}
+  vars_files:
+    - "vars/buildfarm.yml"

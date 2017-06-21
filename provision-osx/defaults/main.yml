@@ -1,0 +1,46 @@
+---
+
+remote_tmp_dir: /tmp
+
+nvm_install_url: https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh
+nvm_install_file_name: install-nvm.sh
+
+rvm_install_url: https://raw.githubusercontent.com/rvm/rvm/master/binscripts/rvm-installer
+rvm_install_file_name: install-rvm.sh
+
+rvm_gpg_url: https://rvm.io/mpapis.asc
+rvm_gpg_file_name: mpapis.asc
+
+ruby_version: latest-2.3
+
+node_versions:
+- 6
+
+gem_packages:
+- name: xcode-install
+  version: "2.2.0"
+cocoapods_version: "1.1.1"
+
+# Global only
+npm_packages:
+- name: cordova
+  version: "7.0.1"
+
+homebrew_packages:
+- name: gpg
+
+homebrew_repo: https://github.com/Homebrew/brew
+homebrew_version: "1.2.3"
+
+homebrew_prefix: /usr/local
+homebrew_install_path: "{{ homebrew_prefix }}/Homebrew"
+homebrew_brew_bin_path: /usr/local/bin
+
+homebrew_taps:
+- homebrew/core
+- caskroom/cask
+
+xcode_install_user:
+xcode_install_password:
+xcode_versions:
+- 8
