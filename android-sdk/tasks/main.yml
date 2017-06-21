@@ -88,26 +88,3 @@
 - name: "Accepting the licence  ** Note ** This task may take some time, please be patient"
   command: "oc rsh --namespace={{ project_name }} {{ android_sdk_podname }} androidctl -y sync /opt/tools/{{ config_file }}"
   when: accept is defined and accept
--
-  name: "Get jenkins url"
-  shell: "oc get routes --namespace={{ project_name }} | grep jenkins | awk '{print $2}'"
-  register: jenkins_url
-
--
-  name: "Get jenkins pod"
-  shell: "oc get pods --namespace={{ project_name }} | grep jenkins | awk '{print$1}'"
-  register: jenkins_podname
--
-  name: "Get jenkins password"
-  shell: 'oc env pod {{ jenkins_podname }} --list --namespace={{ project_name }} | grep JENKINS_PASSWORD | tr -d JENKINS_PASSWORD='
-  register: jenkins_password
-
--
-  name: "How to login"
-  shell: "echo 'Your new jenkins instance is available at {{ jenkins_url.stdout }}.
-          Your login credentials are username=admin password={{ jenkins_password.stdout }}'"
-  register: output
-
--
-  debug: var=output.stdout_lines
-  when: output|changed
