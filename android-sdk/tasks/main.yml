@@ -8,7 +8,7 @@
 - name: "Create project"
   command: "oc new-project {{ project_name }} --namespace={{ project_name }}"
   register: create_project_result
-  failed_when: create_project_result.stderr and create_project_result.stderr != '' and 'AlreadyExists' not in create_project_result.stderr
+  failed_when: create_project_result.stderr and create_project_result.stderr != '' and 'already exists' not in create_project_result.stderr
   changed_when: create_project_result.rc == 0 or (create_project_result == 1 and 'created' in create_project_result.stdout)
 
 -
