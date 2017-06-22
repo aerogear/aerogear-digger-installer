@@ -77,8 +77,8 @@
 
 - debug: var=accept
 
-- pause:
-    prompt: "Licences are up to date. Hit enter to continue with the playbook "
+- debug:
+    msg: "Licences are up to date. Continuing...."
   when: accept is undefined
 
 - pause:
