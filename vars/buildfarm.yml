@@ -1,0 +1,20 @@
+---
+
+pause_for: 0
+retry_limit: 20
+interval: 30
+role: "buildfarm"
+
+project_name: aerogear-digger
+
+# Do not modify
+strict_mode: true
+
+buildfarm:
+   pause_for: 20
+
+deployments:
+  - name: "android-slave"
+    containers:
+    - name: "android-slave"
+      image: "docker.io/aerogear/jenkins-android-slave:dev"

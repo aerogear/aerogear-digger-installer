@@ -1,0 +1,58 @@
+---
+
+-
+  name: "Include release specific image versions"
+  include_vars: ../shared_files/{{ rhmap_version }}.yml
+
+-
+  name: "Get jenkins url"
+  shell: "oc get route jenkins --namespace={{ project_name }} -o jsonpath='{.spec.host}'"
+  register: route_output
+
+- pause:
+    prompt: |
+         The BuildFarm was successfully installed, Do you want to configure your existing RHMAP installation to use the new BuildFarm ?
+         
+         If you accept to continue please add your current ~/.ssh/id_rsa.pub key here {{ route_output.stdout }}/user/{{ jenkins_username | default("admin") }}/configure
+
+         Hit enter to continue or ctrl + c to cancel
+
+-
+  name: "Get jenkins pod"
+  shell: "oc get pods --namespace={{ project_name }} | grep Running | grep jenkins | awk '{print$1}'"
+  register: jenkins_podname
+
+- name: "Get the jenkins client cli jar"
+  connection: local
+  get_url:
+    url: "https://{{ route_output.stdout }}/jnlpJars/jenkins-cli.jar"
+    dest: /tmp/jenkins-cli.jar
+    mode: 0775
+
+- name: "Read android slave definition"
+  set_fact:
+    android_slave_image_def: "{{ deployments | selectattr('name', 'match', '^android-slave$') | map(attribute='containers') | list }}"
+-
+  name: "Get image version"
+  set_fact:
+    android_slave_image: "{{ android_slave_image_def[0][0].image }}"
+
+- debug: var=android_slave_image_def
+
+- 
+  name: "Setup the directory for productization"
+  set_fact:
+    groovy_script_dir: ../roles/digger-installer/configure-buildfarm/files
+  when: rhmap_version is defined
+
+- name: "Setup directory for for community resources"
+  set_fact:
+    groovy_script_dir: configure-buildfarm/files
+  when: rhmap_version is not defined
+
+
+- name: "Configure pod template"
+  shell: "java -jar /tmp/jenkins-cli.jar -s https://{{ route_output.stdout }}  groovy  {{ groovy_script_dir }}/podtemplate-config.groovy {{ android_slave_image }}"
+  connection: local
+  register: output
+  failed_when: output.stderr != '' 
