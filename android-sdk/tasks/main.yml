@@ -60,7 +60,7 @@
 
 -
   name: "Install the Android SDK"
-  command: "oc rsh {{ android_sdk_podname }} androidctl sdk install"
+  command: "oc rsh --namespace={{ project_name }} {{ android_sdk_podname }} androidctl sdk install"
 
 # sync using the config file
 
