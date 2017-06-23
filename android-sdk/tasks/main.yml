@@ -8,7 +8,7 @@
 - name: "Create project"
   command: "oc new-project {{ project_name }} --namespace={{ project_name }}"
   register: create_project_result
-  failed_when: create_project_result.stderr and create_project_result.stderr != '' and 'AlreadyExists' not in create_project_result.stderr
+  failed_when: create_project_result.stderr and create_project_result.stderr != '' and 'already exists' not in create_project_result.stderr
   changed_when: create_project_result.rc == 0 or (create_project_result == 1 and 'created' in create_project_result.stdout)
 
 -
@@ -71,20 +71,14 @@
   become: true
   failed_when: "'Traceback' in rsh_cmd.stdout"
 
-- name:
-  set_fact: accept=true
-  when: "'Accept?' in rsh_cmd.stdout"
-
-- debug: var=accept
-
-- pause:
-    prompt: "Licences are up to date. Hit enter to continue with the playbook "
-  when: accept is undefined
+- debug:
+    msg: "Licences are up to date. Continuing...."
+  when: "'Accept?' not in rsh_cmd.stdout"
 
 - pause:
     prompt:  "{{ rsh_cmd.stdout.split('--------------------')[1] }} Hit enter to accept the Licence or hit Ctrl _c and 'A' to reject and cancel the installation."
-  when: accept is defined and accept
+  when: "'Accept?' in rsh_cmd.stdout"
 
 - name: "Accepting the licence  ** Note ** This task may take some time, please be patient"
   command: "oc rsh --namespace={{ project_name }} {{ android_sdk_podname }} androidctl -y sync /opt/tools/{{ config_file }}"
-  when: accept is defined and accept
+  when: "'Accept?' in rsh_cmd.stdout"
