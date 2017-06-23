@@ -1,0 +1,19 @@
+{
+  "kind": "PersistentVolume",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "jenkins"
+  },
+  "spec": {
+    "capacity": {
+      "storage": "10Gi"
+    },
+    "accessModes": [
+      "ReadWriteOnce"
+    ],
+    "persistentVolumeReclaimPolicy": "Recycle",
+    "hostPath": {
+      "path": "/tmp/digger/jenkins"
+    }
+  }
+}
