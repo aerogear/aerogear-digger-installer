@@ -3,6 +3,7 @@
 -
   name: "Include release specific image versions"
   include_vars: ../shared_files/{{ rhmap_version }}.yml
+  when: rhmap_version is defined
 
 -
   name: "Get jenkins url"

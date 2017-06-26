@@ -1,13 +1,13 @@
 ---
 
-# Set templates dir
+
 -
-  name: "Set default template directory"
-  set_fact: buildfarm_templates_dir="/opt/rhmap/{{ rhmap_version }}/templates/buildfarm"
-  when: buildfarm_templates_dir is not defined
+  name: "Update local jenkins-persistent template"
+  template:
+      src: jenkins-persistent-template.j2
+      dest: /tmp/jenkins-persistent-template.json
 
 # Deploy Jenkins instance
-
 -
   name: "Create Project for Jenkins"
   command: "oc new-project {{ project_name }}"
