@@ -95,6 +95,14 @@
                   {
                     "name": "HTTPS_PROXY",
                     "value": "${HTTPS_PROXY}"
+                  },
+                  {
+                    "name": "HTTP_PROXY",
+                    "value": "${HTTP_PROXY}"
+                  },
+                  {
+                    "name": "GRADLE_OPTS",
+                    "value": "${GRADLE_OPTS}"
                   }
                 ],
                 "resources": {
@@ -196,9 +204,21 @@
     },
     {
       "name": "HTTPS_PROXY",
-      "displayName": "Outbound proxy if required, used to download Android SDK",
+      "displayName": "Outbound proxy if required for https requests",
       "description": "HTTPS Proxy address, examples http://user:pass@10.10.10.10:8888, http://10.10.10.01:8888",
       "value": "{{ proxy_url | default('') }}"
+    },
+    {
+      "name": "HTTP_PROXY",
+      "displayName": "Outbound proxy if required for http requests",
+      "description": "HTTP Proxy address, examples http://user:pass@10.10.10.10:8888, http://10.10.10.01:8888",
+      "value": "{{ proxy_url | default('') }}"
+    },
+    {
+      "name": "GRADLE_OPTS",
+      "displayName": "",
+      "description": "example -Dhttp.proxyHost=10.10.10.01 -Dhttp.proxyPort=8888 -Dhttps.proxyHost=10.10.10.01 -Dhttps.proxyPort=8888 ",
+      "value": "{{ proxy_gradle_opts | default('') }}"
     }
   ],
   "labels": {
