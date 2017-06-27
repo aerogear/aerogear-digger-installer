@@ -14,7 +14,7 @@
     prompt: |
          The BuildFarm was successfully installed, Do you want to configure your existing RHMAP installation to use the new BuildFarm ?
          
-         If you accept to continue please add your current ~/.ssh/id_rsa.pub key here {{ route_output.stdout }}/user/{{ jenkins_username | default("admin") }}/configure
+         If you accept to continue please add your current ~/.ssh/id_rsa.pub key here {{ jenkins_route_protocol | default("https")}}://{{ route_output.stdout }}/user/{{ jenkins_username | default("admin") }}/configure
 
          Hit enter to continue or ctrl + c to cancel
 
