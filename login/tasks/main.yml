@@ -1,0 +1,46 @@
+---
+
+-
+  name: "Check for presence of OpenShift command line tool"
+  register: output
+  shell: oc
+  args:
+    executable: /bin/bash
+  failed_when: output.stderr and 'command not found' in output.stderr
+  changed_when: False
+
+# We want to be able to log in as a developer, but we might also want to log in as a sys admin (we dont as of yet).
+-
+  name: "Login as user using the OpenShift command line tool"
+  command: 'oc login --username={{ oc_user }} --password="{{ oc_password }}"'
+  register: output
+  when:
+    - ansible_connection != 'local'
+
+# this one is a workaround for OpenShift dedicated, since we cant ssh to the nodes we must execute this locally and log in via the cli.
+-
+  name: "Login as remote user using the OpenShift command line tool"
+  command: 'oc login {{ master_url }} --username={{ oc_user }} --password="{{ oc_password }}"'
+  register: output
+  when:
+    - master_url is defined
+    - ansible_connection == 'local'
+    - target is undefined or target != 'cluster_up'
+
+-
+  name: "Login as remote user using the OpenShift command line tool"
+  command: 'oc login {{ master_url }} --username={{ oc_user }} --password="{{ oc_password }}" --insecure-skip-tls-verify'
+  register: output
+  when:
+    - master_url is defined
+    - ansible_connection == 'local'
+    - target is defined
+    - target == 'cluster_up'
+-
+  debug: var=output
+  when: output|failed
+
+-
+  name: "Log in to project on update"
+  command: "oc project {{ project_name }}"
+  when: updating is defined and updating == true

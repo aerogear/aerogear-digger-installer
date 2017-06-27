@@ -1,0 +1,20 @@
+---
+
+- name: "Run initial minimum requirement checks"
+  hosts: localhost
+  remote_user: root
+  tasks:
+    -
+      name: "Check Java is installed on path of local machine"
+      command: which java
+      connection: local
+
+- name: "Deploy Digger"
+  hosts: master
+  remote_user: root
+  roles:
+    - {role: deploy-jenkins, tags: deploy-jenkins }
+    - {role: android-sdk, when: "'android' in digger_platforms", tags: android-sdk}
+    - {role: configure-buildfarm, tags: configure-buildfarm}
+  vars_files:
+    - "vars/buildfarm.yml"

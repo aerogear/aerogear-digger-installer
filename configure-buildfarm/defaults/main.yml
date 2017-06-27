@@ -1,0 +1,6 @@
+---
+
+# The platfroms that are supported by the self-managed build farm. 
+# Valid platforms are 'android' and 'ios'. Multiple values should be separated by comma
+project_name: jenkins
+buildfarm_version: "2.0"

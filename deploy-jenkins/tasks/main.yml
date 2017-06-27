@@ -1,0 +1,32 @@
+---
+
+
+-
+  name: "Update local jenkins-persistent template"
+  template:
+      src: jenkins-persistent-template.j2
+      dest: /tmp/jenkins-persistent-template.json
+
+# Deploy Jenkins instance
+-
+  name: "Create Project for Jenkins"
+  command: "oc new-project {{ project_name }}"
+  register: output
+  failed_when: output.stderr != '' and 'already exists' not in output.stderr
+
+-
+  name: "Deploy the Jenkins Instance"
+  command: "oc new-app --namespace {{ project_name }} -f {{ buildfarm_templates_dir }}/jenkins-persistent-template.json -p ENABLE_OAUTH={{ enable_oauth }}"
+  register: jenkins_create_result
+  failed_when:
+    - jenkins_create_result.stderr and jenkins_create_result.stderr != '' and 'already exists' not in jenkins_create_result.stderr
+  changed_when: jenkins_create_result.rc == 0 or (jenkins_create_result.rc == 1 and 'created' in jenkins_create_result.stdout)
+
+-
+  name: "Poll for Pods to become ready"
+  command: oc get pods --namespace={{ project_name }} --output jsonpath='{.items[*].status.conditions[?(@.type=="Ready")].status}'
+  register: poll_result
+  until: "'False' not in poll_result.stdout"
+  retries: 60
+  delay: 10
+
