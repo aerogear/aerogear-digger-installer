@@ -1,0 +1,14 @@
+import jenkins.model.*
+
+def instance = Jenkins.getInstance()
+{% if proxy_user is defined and proxy_user != '' and proxy_pass is defined and proxy_pass != '' %}
+def proxyConfig = new hudson.ProxyConfiguration("{{ proxy_host }}", {{ proxy_port | int }}, "{{ proxy_user }}", "{{ proxy_pass }}")
+{% else %}
+def proxyConfig = new hudson.ProxyConfiguration("{{ proxy_host }}", {{ proxy_port | int }})
+{% endif %}
+
+instance.proxy = proxyConfig
+instance.save()
+proxyConfig.save()
+
+println "HTTP Proxy Configuration Updated"
