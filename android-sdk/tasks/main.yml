@@ -33,7 +33,7 @@
 
 -
   name: "Deploy the Android SDK image"
-  command: "oc new-app --namespace={{ project_name }} -f {{ buildfarm_templates_dir }}/android-sdk-persistent-template.json --namespace={{  project_name }}"
+  command: "oc new-app --namespace={{ project_name }} -f {{ buildfarm_templates_dir }}/android-sdk-persistent-template.json"
   register: android_create_result
   failed_when:
     - android_create_result.stderr and android_create_result.stderr != '' and 'already exists' not in android_create_result.stderr
