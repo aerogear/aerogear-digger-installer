@@ -94,15 +94,30 @@
                   },
                   {
                     "name": "HTTPS_PROXY",
-                    "value": "${HTTPS_PROXY}"
+                    "valueFrom": {
+                      "configMapKeyRef": {
+                        "name": "android-proxy",
+                        "key": "https-proxy"
+                      }
+                    }
                   },
                   {
                     "name": "HTTP_PROXY",
-                    "value": "${HTTP_PROXY}"
+                    "valueFrom": {
+                      "configMapKeyRef": {
+                        "name": "android-proxy",
+                        "key": "http-proxy"
+                      }
+                    }
                   },
                   {
                     "name": "GRADLE_OPTS",
-                    "value": "${GRADLE_OPTS}"
+                    "valueFrom": {
+                      "configMapKeyRef": {
+                        "name": "android-proxy",
+                        "key": "gradle-opts"
+                      }
+                    }
                   }
                 ],
                 "resources": {
@@ -130,6 +145,12 @@
                 "name": "${ANDROID_SDK_SERVICE_NAME}-data",
                 "persistentVolumeClaim": {
                   "claimName": "${ANDROID_SDK_SERVICE_NAME}"
+                }
+              },
+              {
+                "name": "android-proxy",
+                "configMap": {
+                  "name":"android-proxy"
                 }
               }
             ],
@@ -161,6 +182,18 @@
       ],
       "roleRef": {
         "name": "edit"
+      }
+    },
+    {
+      "kind": "ConfigMap",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "android-proxy"
+      },
+      "data": {
+        "https-proxy" : "${HTTPS_PROXY}",
+        "http-proxy": "${HTTP_PROXY}",
+        "gradle-opts": "${GRADLE_OPTS}"
       }
     }
   ],
