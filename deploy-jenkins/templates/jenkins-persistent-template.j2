@@ -69,21 +69,6 @@
         },
         "triggers": [
           {
-            "type": "ImageChange",
-            "imageChangeParams": {
-              "automatic": true,
-              "containerNames": [
-                "jenkins"
-              ],
-              "from": {
-                "kind": "ImageStreamTag",
-                "name": "${JENKINS_IMAGE_STREAM_TAG}",
-                "namespace": "${NAMESPACE}"
-              },
-              "lastTriggeredImage": ""
-            }
-          },
-          {
             "type": "ConfigChange"
           }
         ],
@@ -103,7 +88,7 @@
             "containers": [
               {
                 "name": "jenkins",
-                "image": " ",
+                "image": "${JENKINS_IMAGE_NAME}:${JENKINS_IMAGE_VERSION}",
                 "readinessProbe": {
                   "timeoutSeconds": 3,
                   "initialDelaySeconds": 3,
@@ -299,16 +284,16 @@
       "required": true
     },
     {
-      "name": "NAMESPACE",
-      "displayName": "Jenkins ImageStream Namespace",
-      "description": "The OpenShift Namespace where the Jenkins ImageStream resides.",
-      "value": "openshift"
+      "name": "JENKINS_IMAGE_NAME",
+      "displayName": "Jenkins Image Name",
+      "description": "Name of the Image to be used in the Jenkins Container",
+      "value": "openshift/jenkins-2-centos7"
     },
     {
-      "name": "JENKINS_IMAGE_STREAM_TAG",
-      "displayName": "Jenkins ImageStreamTag",
-      "description": "Name of the ImageStreamTag to be used for the Jenkins image.",
-      "value": "jenkins:latest"
+      "name": "JENKINS_IMAGE_VERSION",
+      "displayName": "Jenkins Image Version",
+      "description": "Image Version to be used in the Jenkins Container",
+      "value": "3.6.0"
     }
   ],
   "labels": {
