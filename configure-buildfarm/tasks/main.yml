@@ -81,3 +81,5 @@
   connection: local
   register: output
   failed_when: output.stderr != ''
+
+- debug: var=output.stdout
