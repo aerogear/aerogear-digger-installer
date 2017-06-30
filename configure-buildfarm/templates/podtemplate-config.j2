@@ -44,52 +44,80 @@ if (existingPodTemplate) {
   println "[INFO] Configuring a new android pod template"
 }
 
-// we first setup the container template
-def c = new ContainerTemplate(IMAGE)
-c.setName(CONTAINER_NAME)
-c.setWorkingDir(WORKDIR)
-c.setArgs(ARGS)
-c.setTtyEnabled(true)
-containerList = new ArrayList<ContainerTemplate>()
-containerList.add(c)
+  // we first setup the container template
+  def c = new ContainerTemplate(IMAGE)
+  c.setName(CONTAINER_NAME)
+  c.setWorkingDir(WORKDIR)
+  c.setArgs(ARGS)
+  c.setTtyEnabled(true)
+  containerList = new ArrayList<ContainerTemplate>()
+  containerList.add(c)
 
-// now setup pod envars
-def pe = new PodEnvVar(ANDROID_HOME_ENVVAR_NAME,ANDROID_HOME_ENVVAR_VALUE)
-podenvarList = new ArrayList<PodEnvVar>()
-podenvarList.add(pe)
+  podEnvVarList = new ArrayList<PodEnvVar>()
 
-if (PROXY_URL?.trim()) {
-  def httpProxyEnvVar = new PodEnvVar(HTTP_PROXY_ENVVAR_NAME, PROXY_URL)
-  def httpsProxyEnvVar = new PodEnvVar(HTTPS_PROXY_ENVVAR_NAME, PROXY_URL)
-  podenvarList.add(httpProxyEnvVar)
-  podenvarList.add(httpsProxyEnvVar)
-}
+  def p = new PodTemplate()
+  if (existingPodTemplate) {
+    p = existingPodTemplate
 
-if (GRADLE_OPTS?.trim()) {
-  def gradleEnvVar = new PodEnvVar(GRADLE_OPTS_ENVVAR_NAME, GRADLE_OPTS)
-  podenvarList.add(gradleEnvVar)
-}
+    //replace the existing env vars if they've changed
+    existingPodEnvVarList = p.getEnvVars()
+    existingPodEnvVarList.each{
+      switch (it.getKey()){
+        case HTTP_PROXY_ENVVAR_NAME:
+            if(!PROXY_URL.equalsIgnoreCase(it.getValue())){
+              println("Updating HTTP_PROXY env var")
+              it.setValue(PROXY_URL)
+            }
+            break
+        case HTTPS_PROXY_ENVVAR_NAME:
+            if(!PROXY_URL.equalsIgnoreCase(it.getValue())){
+              println("Updating HTTPS_PROXY env var")
+              it.setValue(PROXY_URL)
+            }
+            break
+        case GRADLE_OPTS_ENVVAR_NAME:
+            if(!GRADLE_OPTS.equalsIgnoreCase(it.getValue())){
+              println("Updating GRADLE_OPTS env var")
+              it.setValue(GRADLE_OPTS)
+            }
+      }
+    }
 
-// finally set up volumes
-def pvc = new PersistentVolumeClaim(PVC_MOUNT,PVC_NAME, true)
-volumeList = new ArrayList<PersistentVolumeClaim>()
-volumeList.add(pvc);
+  }else{
+    //create the new env vars.
+    if (PROXY_URL?.trim()) {
+      def httpProxyEnvVar = new PodEnvVar(HTTP_PROXY_ENVVAR_NAME, PROXY_URL)
+      def httpsProxyEnvVar = new PodEnvVar(HTTPS_PROXY_ENVVAR_NAME, PROXY_URL)
+      podEnvVarList.add(httpProxyEnvVar)
+      podEnvVarList.add(httpsProxyEnvVar)
+    }
+    if (GRADLE_OPTS?.trim()) {
+      def gradleEnvVar = new PodEnvVar(GRADLE_OPTS_ENVVAR_NAME, GRADLE_OPTS)
+      podEnvVarList.add(gradleEnvVar)
+    }
+      // now setup pod envars
+    def pe = new PodEnvVar(ANDROID_HOME_ENVVAR_NAME,ANDROID_HOME_ENVVAR_VALUE)
+    podEnvVarList.add(pe)
 
-def p = new PodTemplate()
-if (existingPodTemplate) {
-  p = existingPodTemplate
-}
+  }
 
-p.setName(NAME)
-p.setLabel(NAME)
-p.setContainers(containerList)
-p.setEnvVars(podenvarList)
-p.setVolumes(volumeList)
+  // finally set up volumes
+  def pvc = new PersistentVolumeClaim(PVC_MOUNT,PVC_NAME, true)
+  volumeList = new ArrayList<PersistentVolumeClaim>()
+  volumeList.add(pvc);
 
-if (!existingPodTemplate) {
-  cloud.templates[0].add(p)
-}
 
-instance.clouds.replace(cloud)
-instance.save()
-println "[INFO] Successfully updated KubernetesCloud object " + cloud
+  p.setName(NAME)
+  p.setLabel(NAME)
+  p.setContainers(containerList)
+  p.setEnvVars(podEnvVarList)
+  p.setVolumes(volumeList)
+
+  if (!existingPodTemplate) {
+    cloud.templates[0].add(p)
+  }
+
+  instance.clouds.replace(cloud)
+  instance.save()
+  println "[INFO] Successfully updated KubernetesCloud object " + cloud
+
