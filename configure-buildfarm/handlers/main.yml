@@ -1,0 +1,16 @@
+---
+
+-
+  name: "Remove plugins from host"
+  file:
+    state: absent
+    dest: "{{ item.dest }}"
+  listen: remove plugins
+  when: item|changed
+  with_items: "{{ fetched_plugins.results | default([]) }}"
+
+-
+  name: "Restart Jenkins"
+  connection: local
+  command: java -jar /tmp/jenkins-cli.jar -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }} restart
+  listen: restart jenkins
