@@ -56,7 +56,7 @@
 
 -
   name: "Configure HTTP Proxy Settings"
-  command: java -jar /tmp/jenkins-cli.jar -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }}  groovy /tmp/proxy-config.groovy
+  command: java -jar /tmp/jenkins-cli.jar -remoting -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }}  groovy /tmp/proxy-config.groovy
   when: not proxy_task|skipped
   connection: local
 
@@ -68,9 +68,16 @@
   set_fact:
     android_slave_image: "{{ android_slave_image_def[0][0].image }}"
 
+-
+  name: "Create podtemplate update Groovy script from template"
+  template:
+    src: podtemplate-config.j2
+    dest: "/tmp/podtemplate-config.groovy"
+    force: yes
+  connection: local
 
 - name: "Configure pod template"
-  shell: "java -jar /tmp/jenkins-cli.jar -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }}  groovy  {{ groovy_script_dir }}/podtemplate-config.groovy {{ android_slave_image }}"
+  shell: "java -jar /tmp/jenkins-cli.jar -remoting -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }}  groovy  /tmp/podtemplate-config.groovy"
   connection: local
   register: output
   failed_when: output.stderr != ''
