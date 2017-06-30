@@ -10,16 +10,16 @@ import java.util.List
 
 def NAME="android"
 def IMAGE="{{ android_slave_image }}"
-def ENVAR_NAME="ANDROID_HOME"
-def ENVAR_VALUE="/opt/android-sdk-linux"
+def ANDROID_HOME_ENVVAR_NAME="ANDROID_HOME"
+def ANDROID_HOME_ENVVAR_VALUE="/opt/android-sdk-linux"
 def PVC_MOUNT="/opt/android-sdk-linux"
 def PVC_NAME="android-sdk"
 def WORKDIR="/tmp"
 def CONTAINER_NAME="jnlp"
 def ARGS='${computer.jnlpmac} ${computer.name}'
-def HTTP_PROXY_NAME = "HTTP_PROXY"
-def HTTPS_PROXY_NAME = "HTTPS_PROXY"
-def GRADLE_OPTS_NAME = "GRADLE_OPTS"
+def HTTP_PROXY_ENVVAR_NAME = "HTTP_PROXY"
+def HTTPS_PROXY_ENVVAR_NAME = "HTTPS_PROXY"
+def GRADLE_OPTS_ENVVAR_NAME = "GRADLE_OPTS"
 def PROXY_URL="{{ proxy_url | default('') }}"
 def GRADLE_OPTS="{{ proxy_gradle_opts | default('') }}"
 
@@ -54,19 +54,19 @@ containerList = new ArrayList<ContainerTemplate>()
 containerList.add(c)
 
 // now setup pod envars
-def pe = new PodEnvVar(ENVAR_NAME,ENVAR_VALUE)
+def pe = new PodEnvVar(ANDROID_HOME_ENVVAR_NAME,ANDROID_HOME_ENVVAR_VALUE)
 podenvarList = new ArrayList<PodEnvVar>()
 podenvarList.add(pe)
 
 if (PROXY_URL?.trim()) {
-  def httpProxyEnvVar = new PodEnvVar(HTTP_PROXY_NAME, PROXY_URL)
-  def httpsProxyEnvVar = new PodEnvVar(HTTPS_PROXY_NAME, PROXY_URL)
+  def httpProxyEnvVar = new PodEnvVar(HTTP_PROXY_ENVVAR_NAME, PROXY_URL)
+  def httpsProxyEnvVar = new PodEnvVar(HTTPS_PROXY_ENVVAR_NAME, PROXY_URL)
   podenvarList.add(httpProxyEnvVar)
   podenvarList.add(httpsProxyEnvVar)
 }
 
 if (GRADLE_OPTS?.trim()) {
-  def gradleEnvVar = new PodEnvVar(GRADLE_OPTS_NAME, GRADLE_OPTS)
+  def gradleEnvVar = new PodEnvVar(GRADLE_OPTS_ENVVAR_NAME, GRADLE_OPTS)
   podenvarList.add(gradleEnvVar)
 }
 
