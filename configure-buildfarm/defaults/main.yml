@@ -1,6 +1,21 @@
 ---
 
-# The platfroms that are supported by the self-managed build farm. 
-# Valid platforms are 'android' and 'ios'. Multiple values should be separated by comma
 project_name: jenkins
 buildfarm_version: "2.0"
+
+jenkins_home: /var/lib/jenkins
+jenkins_plugins:
+  -
+    name: "ssh-slaves"
+    version: 1.20
+    archive: "http://updates.jenkins-ci.org/download/plugins/ssh-slaves/1.20/ssh-slaves.hpi"
+
+  -
+    name: "kubernetes"
+    version: 0.10
+    archive: "http://updates.jenkins-ci.org/download/plugins/kubernetes/0.10/kubernetes.hpi"
+
+  -
+    name: "android-signing"
+    version: 2.2.4
+    archive: "http://updates.jenkins-ci.org/download/plugins/android-signing/2.2.4/android-signing.hpi"

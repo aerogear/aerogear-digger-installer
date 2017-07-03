@@ -4,22 +4,37 @@
   name: "Include release specific image versions"
   include_vars: ../shared_files/{{ rhmap_version }}.yml
   when: rhmap_version is defined
+  tags:
+    - config
 
 -
   name: "Setup the directory for productization"
   set_fact:
     groovy_script_dir: ../roles/digger-installer/configure-buildfarm/files
   when: rhmap_version is defined
+  tags:
+    - plugins
+    - proxy
+    - config
 
 - name: "Setup directory for for community resources"
   set_fact:
     groovy_script_dir: configure-buildfarm/files
   when: rhmap_version is not defined
+  tags:
+    - plugins
+    - proxy
+    - config
 
 -
   name: "Get jenkins url"
   shell: "oc get route jenkins --namespace={{ project_name }} -o jsonpath='{.spec.host}'"
   register: route_output
+  changed_when: False
+  tags:
+    - plugins
+    - proxy
+    - config
 
 - pause:
     prompt: |
@@ -30,6 +45,10 @@
          {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }}/user/{{ jenkins_username | default("admin") }}/configure
 
          Hit enter to continue or ctrl + c to cancel
+  tags:
+    - plugins
+    - proxy
+    - config
 
 
 - name: "Get the jenkins client cli jar"
@@ -39,6 +58,10 @@
     dest: /tmp/jenkins-cli.jar
     force: yes
     mode: 0775
+  tags:
+    - plugins
+    - proxy
+    - config
 
 -
   name: "Create Groovy script from template"
@@ -53,20 +76,29 @@
     - proxy_host != ''
     - proxy_port is defined
     - proxy_port != ''
+  tags:
+     - proxy
 
 -
   name: "Configure HTTP Proxy Settings"
   command: java -jar /tmp/jenkins-cli.jar -remoting -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }}  groovy /tmp/proxy-config.groovy
   when: not proxy_task|skipped
   connection: local
+  tags:
+     - proxy
 
 - name: "Read android slave definition"
   set_fact:
     android_slave_image_def: "{{ deployments | selectattr('name', 'match', '^android-slave$') | map(attribute='containers') | list }}"
+  tags:
+    - config
+
 -
   name: "Get image version"
   set_fact:
     android_slave_image: "{{ android_slave_image_def[0][0].image }}"
+  tags:
+     - config
 
 -
   name: "Create podtemplate update Groovy script from template"
@@ -75,11 +107,49 @@
     dest: "/tmp/podtemplate-config.groovy"
     force: yes
   connection: local
+  tags:
+    - config
 
 - name: "Configure pod template"
   shell: "java -jar /tmp/jenkins-cli.jar -remoting -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }}  groovy  /tmp/podtemplate-config.groovy"
   connection: local
   register: output
   failed_when: output.stderr != ''
+  tags:
+     - config
 
-- debug: var=output.stdout
+-
+  name: "Get list of missing and unmet Jenkins plugins"
+  command: java -jar /tmp/jenkins-cli.jar -remoting -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }}  groovy {{ groovy_script_dir }}/configure-plugins.groovy  '{{ jenkins_plugins | to_json | replace('\n', '') }}'
+  register: plugins_output
+  connection: local
+  changed_when: false
+  tags:
+    - plugins
+
+-
+  name: "Fetch required plugin"
+  get_url:
+    url: "{{ item.archive }}"
+    dest: /tmp/{{item.name}}.hpi
+    mode: 775
+  environment:
+    http_proxy: "{{ proxy_url | default('') }}"
+    https_proxy: "{{ proxy_url | default('') }}"
+  with_items: "{{ jenkins_plugins }}"
+  when: plugins_output.stdout.find( item.name) != -1
+  register: fetched_plugins
+  notify:
+    - remove plugins
+  tags:
+    - plugins
+
+-
+  name: "Install plugins"
+  shell: "oc cp --namespace={{ project_name }} /tmp/{{ item.name }}.hpi $(oc get pods --namespace={{ project_name }} | grep Running | grep jenkins- | awk '{print $1}' ):/{{ jenkins_home }}/plugins/"
+  with_items: "{{ jenkins_plugins }}"
+  when: plugins_output.stdout.find( item.name) != -1
+  register: installed_plugins
+  notify: restart jenkins
+  tags:
+    - plugins

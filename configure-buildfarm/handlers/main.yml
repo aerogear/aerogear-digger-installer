@@ -1,0 +1,21 @@
+---
+
+-
+  name: "Remove plugins from host"
+  file:
+    state: absent
+    dest: "{{ item.dest }}"
+  listen: remove plugins
+  when: item|changed
+  with_items: "{{ fetched_plugins.results | default([]) }}"
+
+# The failed_when condition should be removed from the following handler
+# when we move to a later version of Jenkins which includes this fix:
+# https://issues.jenkins-ci.org/browse/JENKINS-44769?focusedCommentId=302576&page=com.atlassian.jira.plugin.system.issuetabpanels%3Acomment-tabpanel
+-
+  name: "Restart Jenkins"
+  connection: local
+  command: java -jar /tmp/jenkins-cli.jar -remoting -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }} restart
+  listen: restart jenkins
+  register: restart_cmd
+  failed_when: restart_cmd.rc != 0 and 'NullPointerException' not in restart_cmd.stdout
