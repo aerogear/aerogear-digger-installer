@@ -107,6 +107,8 @@
     dest: "/tmp/podtemplate-config.groovy"
     force: yes
   connection: local
+  tags:
+    - config
 
 - name: "Configure pod template"
   shell: "java -jar /tmp/jenkins-cli.jar -remoting -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }}  groovy  /tmp/podtemplate-config.groovy"
