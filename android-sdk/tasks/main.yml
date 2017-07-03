@@ -92,7 +92,7 @@
   command: "oc rsh --namespace={{ project_name }} {{ android_sdk_podname }} androidctl sync /opt/tools/{{ config_file }}"
   register: rsh_cmd
   become: true
-  failed_when: "'Traceback' in rsh_cmd.stdout"
+  failed_when: "'Traceback' in rsh_cmd.stdout or 'Common Arguments' in rsh_cmd.stdout"
 
 - debug:
     msg: "Licences are up to date. Continuing...."
