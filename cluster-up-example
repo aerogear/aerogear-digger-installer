@@ -19,6 +19,18 @@ oc_password=developer
 digger_project_name=digger
 digger_platforms="android,ios"
 
+# Add values here if a proxy is to be used
+proxy_host=""
+proxy_port=""
+proxy_user=""
+proxy_pass=""
+
+# For proxy_url the syntax should be:
+# http://<proxy-host>:<proxy-port>
+# or
+# http://<proxy_user>:<proxy_pass>@<proxy-host>:<proxy-port>
+proxy_url=""
+
 
 [master]
 10.32.241.238

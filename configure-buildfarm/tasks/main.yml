@@ -101,6 +101,41 @@
      - config
 
 -
+  name: "Create proxy_gradle_opts from variables - no proxy"
+  set_fact:
+    proxy_gradle_opts: ""
+  when: proxy_host is undefined or proxy_host == ""
+  tags:
+    - proxy
+    - config
+
+-
+  name: "Create proxy_gradle_opts from variables - proxy - no auth"
+  set_fact:
+    proxy_gradle_opts: "-Dhttp.proxyHost={{ proxy_host }} -Dhttp.proxyPort={{ proxy_port }} -Dhttps.proxyHost={{ proxy_host }} -Dhttps.proxyPort={{ proxy_port }}"
+  when:
+    - proxy_host is defined and proxy_host != ""
+    - proxy_port is defined and proxy_port != ""
+    - proxy_user is undefined or proxy_user == ""
+    - proxy_pass is undefined or proxy_password == ""
+  tags:
+    - proxy
+    - config
+
+-
+  name: "Create proxy_gradle_opts from variables - proxy - auth"
+  set_fact:
+    proxy_gradle_opts: "-Dhttp.proxyHost={{ proxy_host }} -Dhttp.proxyPort={{ proxy_port }} -Dhttps.proxyHost={{ proxy_host }} -Dhttps.proxyPort={{ proxy_port }} -Dhttp.proxyUser={{ proxy_user }} -Dhttp.proxyPassword={{ proxy_pass }} -Dhttps.proxyUser={{ proxy_user }} -Dhttps.proxyPassword={{ proxy_pass }}"
+  when:
+    - proxy_host is defined and proxy_host != ""
+    - proxy_port is defined and proxy_port != ""
+    - proxy_user is defined and proxy_user != ""
+    - proxy_pass is defined and proxy_user != ""
+  tags:
+    - proxy
+    - config
+
+-
   name: "Create podtemplate update Groovy script from template"
   template:
     src: podtemplate-config.j2
