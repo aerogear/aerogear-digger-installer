@@ -118,7 +118,7 @@
 
 -
   name: "Get list of missing and unmet Jenkins plugins"
-  command: java -jar /tmp/jenkins-cli.jar -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }}  groovy {{ groovy_script_dir }}/configure-plugins.groovy  '{{ jenkins_plugins | to_json | replace('\n', '') }}'
+  command: java -jar /tmp/jenkins-cli.jar -remoting -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }}  groovy {{ groovy_script_dir }}/configure-plugins.groovy  '{{ jenkins_plugins | to_json | replace('\n', '') }}'
   register: plugins_output
   connection: local
   changed_when: false

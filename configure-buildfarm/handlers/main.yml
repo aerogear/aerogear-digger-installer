@@ -12,5 +12,5 @@
 -
   name: "Restart Jenkins"
   connection: local
-  command: java -jar /tmp/jenkins-cli.jar -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }} restart
+  command: java -jar /tmp/jenkins-cli.jar -remoting -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }} restart
   listen: restart jenkins
