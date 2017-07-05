@@ -14,3 +14,9 @@
 
 - include: download_certs.yml
   tags: osx_download_certs
+
+- include: pod_repo_update.yml
+  tags: pod_repo_update
+
+- include: configure_buildfarm_node.yml
+  tags: configure_buildfarm

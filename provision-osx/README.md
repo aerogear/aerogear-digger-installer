@@ -7,18 +7,25 @@ Provision Jenkins node for the build farm. This role performs a few tasks, these
 * [Install NVM and Node](#install-rvm-and-ruby)
 * [Install Xcode](#install-xcode)
 * [Download certs](#download-certs)
+* [Configure Buildfarm node](#configure-buildfarm-node)
 
 ## Prerequisites
 * SSH access as a user with sudo permissions.
 * `ansible_sudo_pass` variable set when running the job.
+* `xcode_install_user` variable set when running the job, otherwise Xcode tasks will be skipped.
+* `xcode_install_password` variable set when running the job, otherwise Xcode tasks will be skipped.
 
 ## Network access
 The job supports the use of a proxy.
 
 The node will need access to the following external hosts:
-* `https://github.com`
-* `https://raw.githubusercontent.com`
-* `https://rvm.io`
+* `https://github.com` - To download and install github and Cocoapods.
+* `https://raw.githubusercontent.com` - To download and install NVM.
+* `https://rvm.io` - To download and install RVM.
+* `http://developer.apple.com` - To download developer certificates and Xcode.
+* `https://npmjs.org` - To install NPM packages.
+
+***Note: Other external hosts may be required depending on what other packages you specify to install.***
 
 ## Install Homebrew
 Installs Homebrew on the node.
@@ -83,8 +90,8 @@ Alternatively disable 2FA on the Apple Developer Account for the duration of the
 Ansible job.
 
 ### Options
-* `xcode_install_user` - Apple Developer Account username.
-* `xcode_install_password` - Apple Developer Account password.
+* `xcode_install_user` - Apple Developer Account username. If this is not set then Xcode will not be installed.
+* `xcode_install_password` - Apple Developer Account password. If this is not set then Xcode will not be installed.
 * `xcode_install_session_token` - Apple Developer Account auth cookie from `fastlane spaceauth` command (For accounts with 2FA enabled).
 * `xcode_versions` - A list of Xcode versions to install. These may take over 30 minutes each to install.
 
@@ -96,5 +103,28 @@ This certificate will be downloaded into the user's home directory.
 * `apple_wwdr_cert_url` - Apple WWDR certificate URL. Defaults to Apple's official URL
 * `apple_wwdr_cert_file_name` - Output file name of the downloaded file. Defaults to `AppleWWDRCA.cer`.
 
+## Configure Buildfarm node
+Creates a credential set in the build farm for the macOS nodes using the provided keys. Add each machine as a node in the build farm, connecting through SSH.
+
+You will need to create a key pair using a tool such as `ssh-keygen` to allow the Jenkins instance to connect with the macOS nodes.
+
+### Options
+* `credential_private_key_path` - Location of the private key of the pair. This is stored in Jenkins and used to SSH into the macOS node. If this is not set then this section will be skipped.
+* `credential_passphrase` - Passphrase of the private key. This is stored in Jenkins and used to SSH into the macOS node. If this is not set then this section will be skipped.
+* `credential_public_key_path` - Location of the public key of the pair. If this is not set then this section will be skipped.
+* `buildfarm_node_port` - The port to connect to the macOS node on. Defaults to `22`.
+* `buildfarm_node_root_dir` - Root node of the node in Jenkins. Defaults to `/Users/jenkins`.
+* `buildfarm_credential_id` - Identifier for the Jenkins credential object. Defaults to `macOS_buildfarm_cred`.
+* `buildfarm_credential_description` - Description of the Jenkins credential object.
+* `buildfarm_node_name` - Name of the slave/node in Jenkins. Defaults to `macOS (<node_host_address>)`.
+* `buildfarm_node_labels` - List of labels to give the macOS node. Defaults to only `ios`.
+* `buildfarm_user_id` - Jenkins user. Defaults to `admin`.
+* `buildfarm_node_executors` - Number of executors (Jenkins configuration) on the macOS node. Defaults to `1`.
+* `buildfarm_node_mode` - How the macOS node should be utilised. Should be one of:
+  - `NORMAL` - Use this node as much as possible
+  - `EXCLUSIVE` - Only build jobs with labels matching this node.
+* `buildfarm_node_description` - Description of the macOS node in Jenkins.
+
 ## Other options
 * `remote_tmp_dir` - A directory where downloaded scripts and other miscellaneous files can be stored for the duration of the job.
+* `project_name` - Name of the Jenkins project in OpenShift. Defaults to `jenkins`.

@@ -1,5 +1,7 @@
 ---
 
+# This file should not be modified by and end user.
+
 remote_tmp_dir: /tmp
 
 nvm_install_url: https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh
@@ -11,7 +13,7 @@ rvm_install_file_name: install-rvm.sh
 rvm_gpg_url: https://rvm.io/mpapis.asc
 rvm_gpg_file_name: mpapis.asc
 
-ruby_version: latest-2.3
+ruby_version: ruby-2.3.3-latest
 
 node_versions:
 - 6
@@ -40,10 +42,31 @@ homebrew_taps:
 - homebrew/core
 - caskroom/cask
 
-xcode_install_user:
-xcode_install_password:
 xcode_versions:
-- 8
+- 8.3
 
 apple_wwdr_cert_url: http://developer.apple.com/certificationauthority/AppleWWDRCA.cer
 apple_wwdr_cert_file_name: AppleWWDRCA.cer
+
+buildfarm_node_port: 22
+
+buildfarm_node_root_dir: "/Users/jenkins"
+
+buildfarm_credential_id: macOS_buildfarm_cred
+
+buildfarm_credential_description: Shared credential for the macOS nodes in the buildfarm
+
+buildfarm_node_name: "macOS ({{ ansible_host }})"
+
+buildfarm_node_labels:
+- ios
+
+buildfarm_user_id: admin
+
+buildfarm_node_executors: 1
+
+buildfarm_node_mode: NORMAL
+
+buildfarm_node_description: macOS node for the buildfarm
+
+project_name: jenkins

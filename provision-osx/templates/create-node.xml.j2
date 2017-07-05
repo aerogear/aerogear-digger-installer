@@ -1,0 +1,37 @@
+<slave>
+  <name>{{ buildfarm_node_name }}</name>
+  <description>{{ buildfarm_node_description }}</description>
+  <remoteFS>{{ buildfarm_node_root_dir }}</remoteFS>
+  <numExecutors>{{ buildfarm_node_executors }}</numExecutors>
+  <mode>{{ buildfarm_node_mode }}</mode>
+  <retentionStrategy class="hudson.slaves.RetentionStrategy$Always"/>
+  <launcher class="hudson.plugins.sshslaves.SSHLauncher" plugin="ssh-slaves@1.20">
+    <host>{{ ansible_host }}</host>
+    <port>{{ buildfarm_node_port }}</port>
+    <credentialsId>{{ buildfarm_credential_id }}</credentialsId>
+    <sshHostKeyVerificationStrategy class="hudson.plugins.sshslaves.verifiers.NonVerifyingKeyVerificationStrategy"/>
+  </launcher>
+  <label>{{ buildfarm_node_labels | join(' ') }}</label>
+    <nodeProperties>
+      <hudson.slaves.EnvironmentVariablesNodeProperty>
+        <envVars serialization="custom">
+          <unserializable-parents/>
+          <tree-map>
+            <default>
+              <comparator class="hudson.util.CaseInsensitiveComparator"/>
+            </default>
+            <int>4</int>
+            <string>BASH</string>
+            <string>{{ buildfarm_env_bash.stdout }}</string>
+            <string>CI</string>
+            <string>Y</string>
+            <string>GEM_HOME</string>
+            <string>{{ buildfarm_env_gem.stdout }}</string>
+            <string>PATH</string>
+            <string>{{ buildfarm_env_path.stdout }}</string>
+          </tree-map>
+        </envVars>
+      </hudson.slaves.EnvironmentVariablesNodeProperty>
+    </nodeProperties>
+  <userId>{{ buildfarm_user_id }}</userId>
+</slave>

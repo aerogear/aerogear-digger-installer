@@ -1,0 +1,124 @@
+---
+
+-
+  debug:
+    msg:
+    - Configuring macOS nodes as part of the build farm will be skipped.
+    - credential_private_key_path, credential_public_key_path and credential_passphrase must be defined.
+    - Run this job again to configure the build farm nodes.
+  when:
+  - credential_private_key_path is not defined
+  - credential_private_key_path == ''
+  - credential_public_key_path is not defined
+  - credential_public_key_path == ''
+  - credential_passphrase is not defined
+  - credential_passphrase == ''
+
+-
+  block:
+  -
+    name: Get jenkins url
+    shell: "oc get route jenkins --namespace={{ project_name }} -o jsonpath='{.spec.host}'"
+    delegate_to: "{{ groups['master'][0] }}"
+    register: route_output
+    changed_when: False
+
+  - include: configure_node_env_vars.yml
+
+  -
+    block:
+    -
+      name: Get the jenkins client cli jar
+      connection: local
+      get_url:
+        url: "{{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }}/jnlpJars/jenkins-cli.jar"
+        dest: /tmp/jenkins-cli.jar
+        force: yes
+        validate_certs: no
+        mode: 0775
+      environment:
+        http_proxy: "{{ proxy_url | default('') }}"
+        https_proxy: "{{ proxy_url | default('') }}"
+
+    -
+      name: Retrieve provided private key
+      shell: "cat {{ credential_private_key_path }}"
+      register: private_key
+      changed_when: False
+
+    -
+      name: Retrieve provided public key
+      shell: "cat {{ credential_public_key_path }}"
+      register: public_key
+      changed_when: False
+
+    -
+      name: Set credential_private_key and credential_passphrase
+      set_fact:
+        credential_private_key: "{{ private_key.stdout }}"
+        credential_public_key: "{{ public_key.stdout }}"
+
+    -
+      name: Create credential config from template
+      template:
+        src: create-credential.xml.j2
+        dest: "/tmp/create-credential.xml"
+        force: yes
+
+    -
+      name: Create credential
+      shell: cat /tmp/create-credential.xml | java -jar /tmp/jenkins-cli.jar -remoting -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }} create-credentials-by-xml system::system::jenkins _
+      args:
+        executable: /bin/bash
+      register: create_credential
+      failed_when: create_credential.rc != 0 and create_credential.stderr.find('No change') == -1
+      changed_when: create_credential.rc == 0
+
+    -
+      name: Update credential
+      shell: "cat /tmp/create-credential.xml | java -jar /tmp/jenkins-cli.jar -remoting -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }} update-credentials-by-xml system::system::jenkins _ {{ buildfarm_credential_id }}"
+      args:
+        executable: /bin/bash
+      register: update_credential
+      when: create_credential.rc != 0 and create_credential.stderr.find('No change') >= 0
+    run_once: true
+    connection: local
+
+  -
+    authorized_key:
+      user: "{{ ansible_ssh_user }}"
+      state: present
+      key: "{{ credential_public_key }}"
+
+  -
+    block:
+    -
+      name: Create node config from template
+      template:
+        src: create-node.xml.j2
+        dest: "/tmp/create-node.xml"
+        force: yes
+    -
+      name: Create node
+      shell: cat /tmp/create-node.xml | java -jar /tmp/jenkins-cli.jar -remoting -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }} create-node
+      args:
+        executable: /bin/bash
+      register: create_node
+      failed_when: create_node.rc != 0 and create_node.stderr.find('already exists') == -1
+      changed_when: create_node.rc == 0
+
+    -
+      name: Update node
+      shell: "cat /tmp/create-node.xml | java -jar /tmp/jenkins-cli.jar -remoting -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }} update-node '{{ buildfarm_node_name }}'"
+      args:
+        executable: /bin/bash
+      register: create_node
+      when: create_node.rc != 0 and create_node.stderr.find('already exists') >= 0
+    connection: local
+  when: 
+  - credential_private_key_path is defined
+  - credential_private_key_path != ''
+  - credential_public_key_path is defined
+  - credential_public_key_path != ''
+  - credential_passphrase is defined
+  - credential_passphrase != ''

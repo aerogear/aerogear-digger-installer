@@ -1,0 +1,12 @@
+- include: configure_node_env_vars.yml
+
+-
+  name: Update Cocoapods
+  shell: pod repo update
+  register: pod_repo_update
+  changed_when: pod_repo_update.stdout.find('Already up-to-date') == -1
+  environment:
+    PATH: "{{ buildfarm_env_path.stdout }}"
+    GEM_HOME: "{{ buildfarm_env_gem.stdout }}"
+    http_proxy: "{{ proxy_url | default('') }}"
+    https_proxy: "{{ proxy_url | default('') }}"

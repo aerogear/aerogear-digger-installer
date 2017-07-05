@@ -52,7 +52,7 @@ The playbook executes the following steps for you:
 - Installs Jenkins
 - Configures Jenkins
 - Installs AndroidSDK to a PV
-- Configures an OSX node
+- [Configures an OSX node](./provision-osx/README.md)
 
 
 ## License
