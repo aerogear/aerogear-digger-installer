@@ -4,32 +4,44 @@
   name: "Check and include productised release image versions"
   include_vars: ../shared_files/{{ rhmap_version }}.yml
   when: rhmap_version is defined
+  tags:
+    - deploy-sdk-pod
 
 - name: "Include var file for community resources"
   include_vars: vars/buildfarm.yml
   when: rhmap_version is not defined
+  tags:
+    - deploy-sdk-pod
 
 -
   name: "Read android sdk definition"
   set_fact:
     android_sdk_image_def: "{{ deployments | selectattr('name', 'match', '^android-sdk$') | map(attribute='containers') | list }}"
+  tags:
+    - deploy-sdk-pod
 
 -
   name: "Get image version"
   set_fact:
     android_sdk_image: "{{ android_sdk_image_def[0][0].image }}"
+  tags:
+    - deploy-sdk-pod
 
 -
   name: "Update local android-sdk-persistent template with image version and tag"
   template:
     src: android-sdk-persistent-template.j2
     dest: "{{ buildfarm_templates_dir }}/android-sdk-persistent-template.json"
+  tags:
+    - deploy-sdk-pod
 
 - name: "Create project"
   command: "oc new-project {{ project_name }} --namespace={{ project_name }}"
   register: create_project_result
   failed_when: create_project_result.stderr and create_project_result.stderr != '' and 'already exists' not in create_project_result.stderr
   changed_when: create_project_result.rc == 0 or (create_project_result == 1 and 'created' in create_project_result.stdout)
+  tags:
+    - deploy-sdk-pod
 
 -
   name: "Deploy the Android SDK image"
@@ -38,11 +50,15 @@
   failed_when:
     - android_create_result.stderr and android_create_result.stderr != '' and 'already exists' not in android_create_result.stderr
   changed_when: android_create_result.rc == 0 or (android_create_result.rc == 1 and 'created' in android_create_result.stdout)
+  tags:
+    - deploy-sdk-pod
 
 -
   name: "Pausing for Pods to create"
   pause: seconds=10
   when: android_create_result|changed
+  tags:
+    - deploy-sdk-pod
 
 -
   name: "Poll for Pods to become ready"
@@ -51,26 +67,36 @@
   until: "'False' not in poll_result.stdout"
   retries: 60
   delay: 10
+  tags:
+    - deploy-sdk-pod
 
 -
   name: "Get the Android SDK pod name"
   shell: "oc get pods --namespace={{ project_name }} | grep android-sdk | grep -v deploy | awk '{print$1}'"
   failed_when: output.stdout == ""
   register: output
+  tags:
+    - install-sdk
 
 -
   name: "Register android-sdk pod name"
   set_fact:
     android_sdk_podname: "{{ output.stdout }}"
+  tags:
+    - install-sdk
 
 -
   name: "Set random filename"
   set_fact:
     config_file: "sample{{ 10000 | random }}.cfg"
+  tags:
+    - install-sdk
 
 -
   debug:
     msg: "Filename set to {{ config_file }}"
+  tags:
+    - install-sdk
 
 -
   name: "Template out configuaration file"
@@ -78,10 +104,11 @@
     src: sample_cfg.j2
     dest: /tmp/{{ config_file }}
     force: yes
-  vars: 
+  vars:
     components: "{{ android_sdk_components }}"
     keystore: "{{ android_debug_keystore }}"
-
+  tags:
+    - install-sdk
 # Leaving in command below as comment as we can use this once the miniumum supported version of OpenShift is 3.5
 #-
 #  name: "Copy the Android SDK config file to the container"
@@ -99,6 +126,8 @@
 -
   name: "Install the Android SDK"
   command: "oc rsh --namespace={{ project_name }} {{ android_sdk_podname }} androidctl sdk install"
+  tags:
+    - install-sdk
 
 # sync using the config file
 
@@ -108,15 +137,23 @@
   register: rsh_cmd
   become: true
   failed_when: "'Traceback' in rsh_cmd.stdout or 'Common Arguments' in rsh_cmd.stdout"
+  tags:
+    - install-sdk
 
 - debug:
     msg: "Licences are up to date. Continuing...."
   when: "'Accept?' not in rsh_cmd.stdout"
+  tags:
+    - install-sdk
 
 - pause:
     prompt:  "{{ rsh_cmd.stdout.split('--------------------')[1] }} Hit enter to accept the Licence or hit Ctrl _c and 'A' to reject and cancel the installation."
   when: "'Accept?' in rsh_cmd.stdout"
+  tags:
+    - install-sdk
 
-- name: "Accepting the licence  ** Note ** This task may take some time, please be patient"
+- name: "Licence accepted. Installing SDK ** Note ** This task may take some time, please be patient"
   command: "oc rsh --namespace={{ project_name }} {{ android_sdk_podname }} androidctl -y sync /opt/tools/{{ config_file }}"
   when: "'Accept?' in rsh_cmd.stdout"
+  tags:
+    - install-sdk
