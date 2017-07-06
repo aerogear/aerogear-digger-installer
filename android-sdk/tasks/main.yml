@@ -39,6 +39,10 @@
     - android_create_result.stderr and android_create_result.stderr != '' and 'already exists' not in android_create_result.stderr
   changed_when: android_create_result.rc == 0 or (android_create_result.rc == 1 and 'created' in android_create_result.stdout)
 
+-
+  name: "Pausing for Pods to create"
+  pause: seconds=10
+  when: android_create_result|changed
 
 -
   name: "Poll for Pods to become ready"
