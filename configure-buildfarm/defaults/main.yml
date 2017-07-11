@@ -4,7 +4,22 @@ project_name: jenkins
 buildfarm_version: "2.0"
 
 jenkins_home: /var/lib/jenkins
+# List of plugins required and their dependencies. Note, we don't need to support dependencies for
+# kubernetes plugin since these will be packaged
 jenkins_plugins:
+
+  # Optional dependency required by android-signing plugin, however if older version than 1.58 is installed it will fail
+  -
+    name: "job-dsl"
+    version: 1.58
+    archive: "http://updates.jenkins-ci.org/download/plugins/job-dsl/1.58/job-dsl.hpi"
+
+  # Required by android-signing and ssh-slaves
+  -
+    name: "credentials"
+    version: 2.1.2
+    archive: "http://updates.jenkins-ci.org/download/plugins/credentials/2.1.2/credentials.hpi"
+
   -
     name: "ssh-slaves"
     version: 1.20

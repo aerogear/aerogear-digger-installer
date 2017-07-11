@@ -29,4 +29,5 @@
   until: "'False' not in poll_result.stdout"
   retries: 60
   delay: 10
+  when: jenkins_create_result|changed
 
