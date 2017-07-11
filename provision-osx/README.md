@@ -6,6 +6,7 @@ Provision Jenkins node for the build farm. This role performs a few tasks, these
 * [Install RVM and Ruby](#install-homebrew)
 * [Install NVM and Node](#install-rvm-and-ruby)
 * [Install Xcode](#install-xcode)
+* [Download certs](#download-certs)
 
 ## Prerequisites
 * SSH access as a user with sudo permissions.
@@ -87,6 +88,13 @@ Ansible job.
 * `xcode_install_session_token` - Apple Developer Account auth cookie from `fastlane spaceauth` command (For accounts with 2FA enabled).
 * `xcode_versions` - A list of Xcode versions to install. These may take over 30 minutes each to install.
 
+## Download certs
+Downloads some required certificates into the node. Right now, the only required certificate is Apple's WWDR certificate.
+This certificate will be downloaded into the user's home directory.
+ 
+### Options:
+* `apple_wwdr_cert_url` - Apple WWDR certificate URL. Defaults to Apple's official URL
+* `apple_wwdr_cert_file_name` - Output file name of the downloaded file. Defaults to `AppleWWDRCA.cer`.
 
 ## Other options
 * `remote_tmp_dir` - A directory where downloaded scripts and other miscellaneous files can be stored for the duration of the job.
