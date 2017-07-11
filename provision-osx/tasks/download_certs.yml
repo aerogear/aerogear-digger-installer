@@ -1,0 +1,10 @@
+---
+
+-
+  name: Download Apple WWDR certs
+  get_url:
+    url: "{{ apple_wwdr_cert_url }}"
+    dest: "{{ ansible_env.HOME }}/{{ apple_wwdr_cert_file_name }}"
+  environment:
+    http_proxy: "{{ proxy_url | default('') }}"
+    https_proxy: "{{ proxy_url | default('') }}"

@@ -44,3 +44,6 @@ xcode_install_user:
 xcode_install_password:
 xcode_versions:
 - 8
+
+apple_wwdr_cert_url: http://developer.apple.com/certificationauthority/AppleWWDRCA.cer
+apple_wwdr_cert_file_name: AppleWWDRCA.cer
