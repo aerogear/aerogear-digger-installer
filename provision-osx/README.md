@@ -7,6 +7,7 @@ Provision Jenkins node for the build farm. This role performs a few tasks, these
 * [Install NVM and Node](#install-rvm-and-ruby)
 * [Install Xcode](#install-xcode)
 * [Download certs](#download-certs)
+* [Update Cocoapods](#update-cocoapods)
 * [Configure Buildfarm node](#configure-buildfarm-node)
 
 ## Prerequisites
@@ -32,6 +33,8 @@ Installs Homebrew on the node.
 
 This will also add any taps and packages specified in the options.
 
+To run this section as a standalone step you must specify the `osx_install_homebrew` tag.
+
 ### Options
 * `homebrew_version` - The version of Homebrew to install (git tag).
 * `homebrew_packages` - The packages to install using Homebrew. Format: `{ name: <PACKAGE_NAME> }`.
@@ -46,6 +49,8 @@ Installs RVM along with a single version of Ruby. The version of Ruby
 to install can be defined by a variable. The cocoapods gem will be installed, 
 other gems can be specified using the `gem_packages` variable.
 
+To run this section as a standalone step you must specify the `osx_install_ruby` tag.
+
 ### Options
 * `rvm_install_url` - The URL of RVM installation script (defaults to GitHub release).
 * `rvm_install_file_name` - What to name the file on the node.
@@ -58,6 +63,8 @@ other gems can be specified using the `gem_packages` variable.
 ## Install NVM and Node
 Installs NVM along with any versions of Node specified through variables.
 Packages from NPM can be defined also, however they will be installed globally.
+
+To run this section as a standalone step you must specify the `osx_install_nodejs` tag.
 
 ### Options
 * `nvm_install_url` - The URL of NVM installation script (defaults to GitHub release).
@@ -73,6 +80,8 @@ be patient during these stages.
 If you have 2FA enabled for the Apple Developer Account you're specifying then
 you will need to set the `xcode_install_session_token` option to a cookie provided
 by authenticating with Apple. This can be done using `Fastlane Spaceship`.
+
+To run this section as a standalone step you must specify the `osx_install_xcode` tag.
 
 ***Note: Installed fastlane version must be >= 2.42.0***
 
@@ -98,15 +107,24 @@ Ansible job.
 ## Download certs
 Downloads some required certificates into the node. Right now, the only required certificate is Apple's WWDR certificate.
 This certificate will be downloaded into the user's home directory.
- 
+
+To run this section as a standalone step you must specify the `osx_download_certs` tag.
+
 ### Options:
 * `apple_wwdr_cert_url` - Apple WWDR certificate URL. Defaults to Apple's official URL
 * `apple_wwdr_cert_file_name` - Output file name of the downloaded file. Defaults to `AppleWWDRCA.cer`.
+
+## Update Cocoapods
+Executes `pod repo update`.
+
+To run this section as a standalone step you must specify the `osx_pod_repo_update` tag.
 
 ## Configure Buildfarm node
 Creates a credential set in the build farm for the macOS nodes using the provided keys. Add each machine as a node in the build farm, connecting through SSH.
 
 You will need to create a key pair using a tool such as `ssh-keygen` to allow the Jenkins instance to connect with the macOS nodes.
+
+To run this section as a standalone step you must specify the `osx_configure_buildfarm` tag.
 
 ### Options
 * `credential_private_key_path` - Location of the private key of the pair. This is stored in Jenkins and used to SSH into the macOS node. If this is not set then this section will be skipped.

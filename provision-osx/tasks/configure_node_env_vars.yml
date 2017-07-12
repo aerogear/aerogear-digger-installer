@@ -24,6 +24,6 @@
 
   -
     name: Get build farm env PATH
-    shell: "{{ rvm_path.stdout }} && echo $PATH"
+    shell: "{{ rvm_path.stdout }} && echo $PATH:/usr/local/bin:/usr/local/sbin"
     register: buildfarm_env_path
     changed_when: False
