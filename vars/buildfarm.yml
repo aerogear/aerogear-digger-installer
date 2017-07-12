@@ -26,3 +26,5 @@ deployments:
       image: "docker.io/aerogear/android-sdk:dev"
 
 macos_user: jenkins
+
+concurrent_android_builds: 5

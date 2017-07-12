@@ -101,17 +101,17 @@
      - config
 
 -
-  name: "Create podtemplate update Groovy script from template"
+  name: "Create Kubernetes plugin config update Groovy script from template"
   template:
-    src: podtemplate-config.j2
-    dest: "/tmp/podtemplate-config.groovy"
+    src: kubernetes-plugin-config.j2
+    dest: "/tmp/kubernetes-plugin-config.groovy"
     force: yes
   connection: local
   tags:
     - config
 
-- name: "Configure pod template"
-  shell: "java -jar /tmp/jenkins-cli.jar -remoting -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }}  groovy  /tmp/podtemplate-config.groovy"
+- name: "Configure Kubernetes plugin"
+  shell: "java -jar /tmp/jenkins-cli.jar -remoting -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }}  groovy  /tmp/kubernetes-plugin-config.groovy"
   connection: local
   register: output
   failed_when: output.stderr != ''

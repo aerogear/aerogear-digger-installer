@@ -4,6 +4,9 @@ project_name: jenkins
 buildfarm_version: "2.0"
 
 jenkins_home: /var/lib/jenkins
+
+concurrent_android_builds: 10
+
 jenkins_plugins:
   -
     name: "ssh-slaves"
