@@ -1,6 +1,16 @@
 
 # Ansible Roles for installing AeroGear Digger
 
+## Project Info
+
+|                 | Project Info  |
+| --------------- | ------------- |
+| License:        | Apache License, Version 2.0  |
+| Documentation:  | https://github.com/aerogear/digger-installer  |
+| Issue tracker:  | https://issues.jboss.org/browse/AGDIGGER  |
+| Mailing lists:  | [aerogear-users](http://aerogear-users.1116366.n5.nabble.com/) ([subscribe](https://lists.jboss.org/mailman/listinfo/aerogear-users))  |
+|                 | [aerogear-dev](http://aerogear-dev.1069024.n5.nabble.com/) ([subscribe](https://lists.jboss.org/mailman/listinfo/aerogear-dev))  |
+| IRC:            | [#aerogear](https://webchat.freenode.net/?channels=aerogear) channel in the [freenode](http://freenode.net/) network.  |
 
 ## Requirements
 
@@ -53,7 +63,12 @@ The playbook executes the following steps for you:
 - Configures Jenkins
 - Installs AndroidSDK to a PV
 - [Configures an OSX node](./provision-osx/README.md)
+- Installs Nagios and triggers checkes
 
+See the image below for an overview of the playbook and roles
+
+
+<img align="left" src="images/architecture.png">
 
 ## License
 
