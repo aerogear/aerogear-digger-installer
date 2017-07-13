@@ -30,7 +30,9 @@ npm_packages:
 
 homebrew_packages:
 - name: gpg
-
+- name: grep
+- name: jq
+  
 homebrew_repo: https://github.com/Homebrew/brew
 homebrew_version: "1.2.3"
 
