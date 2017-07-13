@@ -138,17 +138,19 @@
   with_items: "{{ jenkins_plugins }}"
   when: plugins_output.stdout.find( item.name) != -1
   register: fetched_plugins
+  connection: local
   notify:
     - remove plugins
   tags:
     - plugins
 
 -
-  name: "Install plugins"
-  shell: "oc cp --namespace={{ project_name }} /tmp/{{ item.name }}.hpi $(oc get pods --namespace={{ project_name }} | grep Running | grep jenkins- | awk '{print $1}' ):/{{ jenkins_home }}/plugins/"
+  name: "Install plugins and restart Jenkins server"
+  command: "java -jar /tmp/jenkins-cli.jar -remoting -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }} install-plugin /tmp/{{ item.name }}.hpi {{ (item == jenkins_plugins[-1]) | ternary('-restart','') }}"
   with_items: "{{ jenkins_plugins }}"
   when: plugins_output.stdout.find( item.name) != -1
   register: installed_plugins
-  notify: restart jenkins
+  connection: local
   tags:
     - plugins
+
