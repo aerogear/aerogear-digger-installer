@@ -23,6 +23,14 @@
   hosts: macos
   remote_user: "{{ macos_user }}"
   roles:
-    - {role: provision-osx, tags: provision-osx}
+    - {role: provision-osx, when: "'ios' in digger_platforms", tags: provision-osx}
+  vars_files:
+    - "vars/buildfarm.yml"
+
+- name: "Install Nagios"
+  hosts: master
+  remote_user: root
+  roles:
+    - {role: deploy-nagios, tags: deploy-nagios}
   vars_files:
     - "vars/buildfarm.yml"

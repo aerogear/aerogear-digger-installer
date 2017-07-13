@@ -30,6 +30,10 @@ proxy_protocol=http
 # The maximum number of concurrent builds for Android. Default is `5`
 # concurrent_android_builds=
 
+# The user and password of the jenkins installation
+# uncomment if you want to override the default admin user credentials
+# jenkins_user=
+# jenkins_pass=
 
 [master]
 # Required. The ip address of the master node of the OpenShift cluster

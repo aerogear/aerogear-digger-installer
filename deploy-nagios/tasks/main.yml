@@ -1,0 +1,112 @@
+---
+
+-
+  name: "Check and include productised release image versions"
+  include_vars: ../shared_files/{{ rhmap_version }}.yml
+  when: rhmap_version is defined
+
+- 
+  name: "Include var file for community resources"
+  include_vars: vars/buildfarm.yml
+  when: rhmap_version is not defined
+
+-
+  name: "Read nagios definition"
+  set_fact:
+    nagios_image_def: "{{ deployments | selectattr('name', 'match', '^digger-nagios$') | map(attribute='containers') | list }}"
+
+-
+  name: "Get jenkins url"
+  shell: "oc get route jenkins --namespace={{ project_name }} -o jsonpath='{.spec.host}'"
+  register: route_output
+
+-
+  name: "Set jenkins url"
+  set_fact:
+    jenkins_url: "{{ route_output.stdout }}"
+  when: route_output | changed
+
+-
+  name: "Get image version"
+  set_fact:
+    nagios_image_version: "{{ nagios_image_def[0][0].image }}"
+
+- 
+  name: "Update local nagios templae with image version and tag"
+  template:
+    src: nagios-template.j2
+    dest: "{{ buildfarm_templates_dir }}/nagios-template.json"
+
+- 
+  name: "Create project"
+  command: "oc new-project {{ project_name }} --namespace={{ project_name }}"
+  register: create_project_result
+  failed_when: create_project_result.stderr and create_project_result.stderr != '' and 'already exists' not in create_project_result.stderr
+  changed_when: create_project_result.rc == 0 or (create_project_result == 1 and 'created' in create_project_result.stdout)
+
+-
+  name: "Create Nagios serviceaccount"
+  command: "oc create serviceaccount nagios --namespace {{ project_name }}"
+  register: nagios_sa_result
+  failed_when:
+    - nagios_sa_result.stderr != '' and 'already exists' not in nagios_sa_result.stderr
+    - "'created' not in nagios_sa_result.stdout"
+  changed_when: nagios_sa_result.rc == 0
+
+-
+  name: "Read list of service accounts for this namepsace"
+  command: oc get policyBindings :default -n {{ project_name }} --template {% raw %}"{{(index .roleBindings 0).roleBinding.subjects}}"{% endraw %}
+  register: sa_list
+  failed_when: False
+  changed_when: False
+
+-
+  name: "Apply admin role to Nagios user"
+  command: "oc policy add-role-to-user admin -z nagios  --namespace {{ project_name }} "
+  register: nagios_role_result
+  changed_when: "'nagios' not in sa_list.stdout and nagios_role_result.rc == 0"
+
+- 
+  name: "Create the Nagios resources"
+  command: "oc new-app --namespace {{ project_name }} -f {{ buildfarm_templates_dir }}/nagios-template.json"
+  register: nagios_create_result
+  failed_when:
+    - nagios_create_result.stderr and nagios_create_result.stderr != '' and 'already exists' not in nagios_create_result.stderr
+  changed_when: nagios_create_result.rc == 0 or (nagios_create_result.rc == 1 and 'created' in nagios_create_result.stdout)
+-
+  name: "Poll for Pods to become ready"
+  command: oc get pods --namespace={{ project_name }} --output jsonpath='{.items[*].status.conditions[?(@.type=="Ready")].status}'
+  register: poll_result
+  until: "'False' not in poll_result.stdout"
+  retries: 60
+  delay: 10
+  when: nagios_create_result|changed
+
+- name: Force status check to schedule in Nagios container
+  shell: "oc exec --namespace {{ project_name }} $(oc get po --namespace {{ project_name }}  | grep nagios | awk '{print $1}') -c nagios -- python /opt/rhmap/host-svc-check"
+  register: nagios_result
+  failed_when: False
+
+
+- name: Execute status check in Nagios container
+  shell: "oc exec  --namespace {{ project_name }}  $(oc get po --namespace {{ project_name }}  | grep nagios | awk '{print $1}') -c nagios -- python /opt/rhmap/check-status | \
+          sed -e 's/16/critical/' -e 's/1/pending/' -e 's/2/healthy/' -e 's/4/warning/' -e 's/8/unknown/' "
+  register: nagios_result
+  failed_when: False
+
+
+-
+  name: "Verify Nagios dashboard is green, fail otherwise"
+  shell: echo {{ item }}
+  register: nagios_dashboard
+  with_items: "{{ nagios_result.stdout_lines }}"
+  when:
+    - (mongo_replicas is defined and mongo_replicas == 3) or (role is defined and role == "core") or (role is defined and role == "dedicated")
+  failed_when:
+    - "'critical' in nagios_dashboard.stdout or 'warning' in nagios_dashboard.stdout or 'unknown' in nagios_dashboard.stdout "
+  changed_when: False
+
+
+- debug: var=nagios_dashboard.stdout_lines
+  when: nagios_dashboard|failed
+
