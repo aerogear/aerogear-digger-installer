@@ -20,7 +20,11 @@
             <default>
               <comparator class="hudson.util.CaseInsensitiveComparator"/>
             </default>
+            {% if proxy_url is defined and proxy_url != '' %}
+            <int>6</int>
+            {% else %}
             <int>4</int>
+            {% endif %}
             <string>BASH</string>
             <string>{{ buildfarm_env_bash.stdout }}</string>
             <string>CI</string>
@@ -29,6 +33,12 @@
             <string>{{ buildfarm_env_gem.stdout }}</string>
             <string>PATH</string>
             <string>{{ buildfarm_env_path.stdout }}</string>
+            {% if proxy_url is defined and proxy_url != '' %}
+            <string>HTTP_PROXY</string>
+            <string>{{ proxy_url }}</string>
+            <string>HTTPS_PROXY</string>
+            <string>{{ proxy_url }}</string>
+            {% endif %}
           </tree-map>
         </envVars>
       </hudson.slaves.EnvironmentVariablesNodeProperty>
