@@ -11,9 +11,16 @@ master_url=
 oc_user=
 oc_password=
 
-#Digger Variables
+# Digger Variables
 digger_project_name=digger
 digger_platforms="android,ios"
+
+# provide proxy info if required
+proxy_host=
+proxy_port=
+proxy_user=
+proxy_pass=
+proxy_protocol=http
 
 [master]
 # The ip address of the master node of the OpenShift cluster
