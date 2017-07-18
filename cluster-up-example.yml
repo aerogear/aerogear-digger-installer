@@ -1,14 +1,10 @@
 [Nodes:children]
 master
-core
-mbaas
+macos
 
 [Nodes:vars]
 ansible_connection=local
 target="cluster_up"
-domain_name="my-domain"
-git_external_protocol=http
-mbaas_target_id=test
 
 # OpenShift Credentials
 master_url='https://localhost:8443'
@@ -19,14 +15,7 @@ oc_password=developer
 digger_project_name=digger
 digger_platforms="android,ios"
 
-
 [master]
-10.32.241.238
-
-[mbaas]
-10.32.241.238
-
-[core]
 10.32.241.238
 
 [macos]

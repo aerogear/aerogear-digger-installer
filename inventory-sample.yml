@@ -1,0 +1,22 @@
+[Nodes:children]
+master
+macos
+
+[Nodes:vars]
+ansible_connection=local
+
+# OpenShift URL
+master_url=
+# OpenShift Credentials
+oc_user=
+oc_password=
+
+#Digger Variables
+digger_project_name=digger
+digger_platforms="android,ios"
+
+[master]
+# The ip address of the master node of the OpenShift cluster
+
+[macos]
+# The ip address(es) of the mac server(s)
