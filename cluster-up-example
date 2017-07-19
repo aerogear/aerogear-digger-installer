@@ -1,6 +1,5 @@
 [Nodes:children]
 master
-macos
 
 [Nodes:vars]
 ansible_connection=local
