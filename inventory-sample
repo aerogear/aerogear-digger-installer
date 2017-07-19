@@ -1,9 +1,8 @@
 [Nodes:children]
 master
+macos
 
 [Nodes:vars]
-ansible_connection=local
-
 # OpenShift URL
 master_url=
 # OpenShift Credentials
