@@ -1,20 +1,15 @@
 ---
-
+# The following fields are used by Ansible and you don't need to change them.
 pause_for: 0
 retry_limit: 20
 interval: 30
 role: "buildfarm"
-
-project_name: aerogear-digger
-
 buildfarm_templates_dir: /tmp
 # Do not modify
 strict_mode: true
-
-jenkins_route_protocol: https
 buildfarm:
    pause_for: 20
-
+# default images for the Android slave containers. You don't need to change them.
 deployments:
   - name: "android-slave"
     containers:
@@ -24,7 +19,14 @@ deployments:
     containers:
     - name: "android-sdk"
       image: "docker.io/aerogear/android-sdk:dev"
-
+# the Jenkins username
 macos_user: jenkins
 
+# The following fields can be changed
+
+# the name of the project in OpenShift. Feel free to change this.
+project_name: aerogear-digger
+# the protocol of the Jenkins server
+jenkins_route_protocol: https
+# max number of concurrent Android builds that are allowed
 concurrent_android_builds: 5
