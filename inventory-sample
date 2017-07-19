@@ -10,7 +10,6 @@ oc_user=
 oc_password=
 
 # Digger Variables
-digger_project_name=digger
 digger_platforms="android,ios"
 
 # provide proxy info if required
@@ -20,8 +19,39 @@ proxy_user=
 proxy_pass=
 proxy_protocol=http
 
+# Optional variables. Uncomment those to provide overrides.
+
+# Specify the project name. Default value is `aerogear-digger`
+# project_name= 
+
+# The protocol of the Jenkins server. Default value is `https`
+# jenkins_route_protocol= 
+
+# The maximum number of concurrent builds for Android. Default is `5`
+# concurrent_android_builds=
+
+
 [master]
-# The ip address of the master node of the OpenShift cluster
+# Required. The ip address of the master node of the OpenShift cluster
 
 [macos]
-# The ip address(es) of the mac server(s)
+# The ip address(es) of the mac server(s). Only required to build iOS apps.
+
+[macos:vars]
+# The following variables are only required to build iOS apps.
+# You can comment them out if you don't need to build iOS apps.
+
+# Apple Developer Account username and password. 
+# If they are not set Xcode installation will be skipped.
+xcode_install_user=
+xcode_install_password=
+
+# Path to the private key that Jenkins should use to SSH into the macOS node. 
+# If this isn’t set the Jenkins node configuration will be skipped.
+credential_private_key_path=
+# Passphrase for the private key. 
+# If this isn’t set the Jenkins node configuration will be skipped.
+credential_passphrase=
+# Path to the public key. The macOS node will add this to it’s authorized_keys file. 
+# If this isn’t set the Jenkins node configuration will be skipped.
+credential_public_key_path=
