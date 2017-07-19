@@ -51,6 +51,7 @@
 -
   name: "Get the Android SDK pod name"
   shell: "oc get pods --namespace={{ project_name }} | grep android-sdk | grep -v deploy | awk '{print$1}'"
+  failed_when: output.stdout == ""
   register: output
 
 -
