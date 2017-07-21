@@ -75,5 +75,5 @@ project_name: jenkins
 
 proxy_device: Ethernet
 proxy_ctx:
-  - webproxy
-  - securewebproxy
+  - setwebproxy
+  - setsecurewebproxy
