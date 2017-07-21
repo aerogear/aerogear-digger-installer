@@ -2,21 +2,21 @@
 
 -
   name: Set node proxy configuration with authentication
-  shell: "networksetup -{{item}} {{proxy_device}} {{proxy_url}} {{proxy_port}} on {{proxy_user}} {{proxy_pass}}"
-  with_items: "{{proxy_ctx}}"
+  shell: "networksetup -{{ item }} {{ proxy_device }} {{ proxy_url }} {{ proxy_port }} on {{ proxy_user }} {{ proxy_pass }}"
+  with_items: "{{ proxy_ctx }}"
   become: true
   when: proxy_user is defined and proxy_pass is defined
 
 -
   name: Set node proxy configuration without authentication
-  shell: "networksetup -{{item}} {{proxy_device}} {{proxy_url}} {{proxy_port}}"
+  shell: "networksetup -{{ item }} {{ proxy_device }} {{ proxy_url }} {{ proxy_port }}"
   with_items: "{{proxy_ctx}}"
   become: true
   when: proxy_user is not defined and proxy_pass is not defined
 
 -
   name: Sets proxy config state
-  shell: "networksetup -{{item}}state {{proxy_device}} {{proxy_status}}"
-  with_items: "{{proxy_ctx}}"
+  shell: "networksetup -{{ item }}state {{ proxy_device }} {{ proxy_status }}"
+  with_items: "{{ proxy_ctx }}"
   become: true
   when: proxy_status is defined
