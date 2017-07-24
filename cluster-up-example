@@ -18,7 +18,13 @@ oc_password=developer
 #Digger Variables
 digger_project_name=digger
 digger_platforms="android,ios"
-
+#proxy_url=127.0.0.1
+#proxy_port=80
+#proxy_user=admin
+#proxy_pass=admin
+#proxy_status=on
+#proxy_device=Ethernet
+#proxy_ctx=["setwebproxy", "setsecurewebproxy"]
 
 [master]
 10.32.241.238
