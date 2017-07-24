@@ -162,7 +162,7 @@ You can switch the proxy status by changing the `proxy_status`variable value to 
 * `proxy_host` - proxy url/base hostname to be used.
 * `proxy_port` - proxy port to be used.
 * `proxy_device` - the proxy network device to use the proxy config from the [list of devices](#list-of-devices).
-* `proxy_ctx` - a list of proxies to be set, defaults to "setwebproxy" and "setsecurewebproxy", see the full list of [proxy types](#proxy-types)
+* `proxy_ctx` - a list of proxies to be set, defaults to "webproxy" and "securewebproxy", see the full list of [proxy types](#proxy-types)
 * `proxy_user` - proxy username for authentication (optional).
 * `proxy_pass` - proxy password for authentication (optional).
 * `proxy_status` - switches the proxy status (on/off) if defined.
@@ -180,7 +180,7 @@ The list should usually contain a device that handles external connections such 
 
 #### Proxy Types
 
-* setwebproxy
-* setsecurewebproxy
-* setstreamingproxy
-* setsocksfirewallproxy
+* webproxy
+* securewebproxy
+* streamingproxy
+* socksfirewallproxy

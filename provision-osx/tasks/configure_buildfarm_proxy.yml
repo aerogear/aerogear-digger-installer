@@ -21,8 +21,7 @@
     - proxy_pass is not defined or proxy_pass == ''
 
 -
-  name: Sets proxy config state
-  shell: "networksetup -{{ item }}state {{ proxy_device }} {{ proxy_status }}"
+  name: Sets proxy status
+  shell: "networksetup -set{{ item }}state {{ proxy_device }} {{ 'on' if proxy_host is defined and proxy_host != '' else 'off'}}"
   with_items: "{{ proxy_ctx }}"
   become: true
-  when: proxy_host is not defined or proxy_host == ''
