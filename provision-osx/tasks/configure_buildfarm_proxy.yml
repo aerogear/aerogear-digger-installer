@@ -25,4 +25,4 @@
   shell: "networksetup -{{ item }}state {{ proxy_device }} {{ proxy_status }}"
   with_items: "{{ proxy_ctx }}"
   become: true
-  when: proxy_status is defined and proxy_status != ''
+  when: proxy_host is not defined or proxy_host == ''
