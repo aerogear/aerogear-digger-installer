@@ -5,18 +5,24 @@
   shell: "networksetup -{{ item }} {{ proxy_device }} {{ proxy_host }} {{ proxy_port }} on {{ proxy_user }} {{ proxy_pass }}"
   with_items: "{{ proxy_ctx }}"
   become: true
-  when: proxy_host is defined and proxy_user is defined and proxy_pass is defined
+  when: 
+    - proxy_host is defined and proxy_host != ''
+    - proxy_user is defined and proxy_user != ''
+    - proxy_pass is defined and proxy_pass != ''
 
 -
   name: Set node proxy configuration without authentication
   shell: "networksetup -{{ item }} {{ proxy_device }} {{ proxy_host }} {{ proxy_port }}"
-  with_items: "{{proxy_ctx}}"
+  with_items: "{{ proxy_ctx }}"
   become: true
-  when: proxy_host is defined and proxy_user is not defined and proxy_pass is not defined
+  when:
+    - proxy_host is defined and proxy_host != ''
+    - proxy_user is not defined or proxy_user == ''
+    - proxy_pass is not defined or proxy_pass == ''
 
 -
   name: Sets proxy config state
   shell: "networksetup -{{ item }}state {{ proxy_device }} {{ proxy_status }}"
   with_items: "{{ proxy_ctx }}"
   become: true
-  when: proxy_status is defined
+  when: proxy_status is defined and proxy_status != ''
