@@ -9,6 +9,7 @@ Provision Jenkins node for the build farm. This role performs a few tasks, these
 * [Download certs](#download-certs)
 * [Update Cocoapods](#update-cocoapods)
 * [Configure Buildfarm node](#configure-buildfarm-node)
+* [Confifure Proxy](#configure-proxy)
 
 ## Prerequisites
 * SSH access as a user with sudo permissions.
@@ -146,3 +147,40 @@ To run this section as a standalone step you must specify the `osx_configure_bui
 ## Other options
 * `remote_tmp_dir` - A directory where downloaded scripts and other miscellaneous files can be stored for the duration of the job.
 * `project_name` - Name of the Jenkins project in OpenShift. Defaults to `jenkins`.
+
+
+## Configure Proxy
+
+Configures a proxy to be used whithin the osx node.
+
+To run this section as a standalone step you must specify the `osx_configure_proxy` tag.
+
+You can switch the proxy status by changing the `proxy_status`variable value to `on` or `off`.
+
+### Options
+
+* `proxy_url` - proxy url/base hostname to be used
+* `proxy_port` - proxy port to be used
+* `proxy_device` - the proxy network device to use the proxy config from the [list of devices](#list-of-devices).
+* `proxy_ctx` - a list of proxies to be set, defaults to "setwebproxy" and "setsecurewebproxy", see the full list of [proxy types](#proxy-types)
+* `proxy_user` - proxy username for authentication (optional)
+* `proxy_pass` - proxy password for authentication (optional)
+* `proxy_status` - switches the proxy status (on/off) if defined
+
+
+#### List of Devices
+
+To list all available devices/services:
+
+```
+networksetup -listallnetworkservices
+```
+
+The list should usually contain a device that handles external connections such as "Ethernet" or "Wi-Fi".
+
+#### Proxy Types
+
+* setwebproxy
+* setsecurewebproxy
+* setstreamingproxy
+* setsocksfirewallproxy
