@@ -1,0 +1,6 @@
+# nagios environment variables
+smtp_server: localhost
+smtp_username: username
+smtp_password: password
+smtp_from_address: admin@example.com
+rhmap_admin_email: root@localhost

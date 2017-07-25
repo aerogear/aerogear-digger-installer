@@ -198,17 +198,17 @@
     {
       "description": "SMTP server address to use for sending alert emails e.g. 1.2.3.4:25",
       "name": "SMTP_SERVER",
-      "value": "localhost"
+      "value": "{{ smtp_server }}"
     },
     {
       "name": "SMTP_USERNAME",
       "description": "SMTP username",
-      "value": "username"
+      "value": "{{ smpt_username }}"
     },
     {
       "name": "SMTP_PASSWORD",
       "description": "SMTP password",
-      "value": "password"
+      "value": "{{ smtp_password }}"
     },
     {
       "description": "Use TLS for message delivery (auto|yes|no)",
@@ -218,12 +218,12 @@
     {
       "description": "From email address for alerts",
       "name": "SMTP_FROM_ADDRESS",
-      "value": "admin@example.com"
+      "value": "{{ smtp_from_address }}"
     },
     {
       "description": "To email address for alerts",
       "name": "RHMAP_ADMIN_EMAIL",
-      "value": "root@localhost"
+      "value": "{{ rhmap_admin_email }}"
     },
     {
       "description": "Nagios admin username",
