@@ -1,4 +1,19 @@
 ---
+galaxy_info:
+  author: AeroGear
+  company: AeroGear
+  description: "Role for Installing Jenkins in digger"
+  issue_tracker_url: https://issues.jboss.org/projects/AGDIGGER/issues
+  license: "license (Apache 2)"
+  min_ansible_version: "2.2.0"
+  platforms:
+    -
+      name: fedora
+      version:
+        - 25
+
+  galaxy_tags:
+    - digger
 
 dependencies:
-  - { role: login, tags: login}
+  - { role: login }
