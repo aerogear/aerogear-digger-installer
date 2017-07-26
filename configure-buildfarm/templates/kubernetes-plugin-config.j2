@@ -23,6 +23,8 @@ def GRADLE_OPTS_ENVVAR_NAME = "GRADLE_OPTS"
 def PROXY_URL="{{ proxy_url | default('') }}"
 def GRADLE_OPTS="{{ proxy_gradle_opts | default('') }}"
 def CONTAINER_CAP = {{ concurrent_android_builds }}
+def BASH_ENVAR_NAME = "BASH_ENV"
+def BASH_ENVVAR = "/etc/profile"
 
 // get the jenkins instance
 def instance = Jenkins.getInstance()
@@ -101,9 +103,12 @@ if (existingPodTemplate) {
     def gradleEnvVar = new PodEnvVar(GRADLE_OPTS_ENVVAR_NAME, GRADLE_OPTS)
     podEnvVarList.add(gradleEnvVar)
   }
-    // now setup pod envars
+
   def pe = new PodEnvVar(ANDROID_HOME_ENVVAR_NAME,ANDROID_HOME_ENVVAR_VALUE)
   podEnvVarList.add(pe)
+
+  def bashEnvVar = new PodEnvVar(BASH_ENVAR_NAME,BASH_ENVVAR)
+  podEnvVarList.add(bashEnvVar)
 
 }
 
