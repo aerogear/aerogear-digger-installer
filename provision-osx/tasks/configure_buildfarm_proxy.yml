@@ -4,7 +4,7 @@
   name: Set proxy vars
   set_fact:
     proxy_state: "off"
-  when: proxy_host is undefined or proxy_host == "" 
+  when: proxy_host is undefined or proxy_host == ""
 
 -
   name: Set node proxy configuration with authentication
