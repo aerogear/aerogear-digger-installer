@@ -38,12 +38,12 @@
 
 - pause:
     prompt: |
+         Note: The following step is required. Playbook run will fail if skipped.
+         
          Jenkins was successfully installed. In order to configure Jenkins and continue with the installation please add your current public key (~/.ssh/id_rsa.pub) in the input box 'SSH Public Keys' at the link below:
          {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }}/user/{{ jenkins_username | default("admin") }}/configure
 
-         Once this step is completed 'Hit enter to continue or ctrl +c to cancel'
-         
-         (Note the addition of your public key is a required step - the playbook will fail otherwise)
+         After you've added your Public SSH key, hit enter to continue or ctrl + c to cancel.
   tags:
     - plugins
     - proxy
