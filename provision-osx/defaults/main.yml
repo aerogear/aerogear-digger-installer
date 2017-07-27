@@ -72,3 +72,8 @@ buildfarm_node_mode: NORMAL
 buildfarm_node_description: macOS node for the buildfarm
 
 project_name: jenkins
+
+proxy_device: Ethernet
+proxy_ctx:
+  - webproxy
+  - securewebproxy

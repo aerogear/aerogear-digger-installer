@@ -12,6 +12,10 @@ oc_password=developer
 
 #Digger Variables
 digger_platforms="android,ios"
+#proxy_host=https://myproxy.com
+#proxy_port=80
+#proxy_device=Ethernet
+#proxy_ctx=["setwebproxy", "setsecurewebproxy"]
 
 [master]
 10.32.241.238

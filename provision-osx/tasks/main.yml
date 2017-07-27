@@ -20,3 +20,6 @@
 
 - include: configure_buildfarm_node.yml
   tags: osx_configure_buildfarm
+
+- include: configure_buildfarm_proxy.yml
+  tags: osx_configure_proxy

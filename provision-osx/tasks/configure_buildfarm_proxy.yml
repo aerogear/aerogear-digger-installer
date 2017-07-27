@@ -1,0 +1,20 @@
+---
+
+-
+  name: Set proxy vars
+  set_fact:
+    proxy_state: "off"
+  when: proxy_host is undefined or proxy_host == ""
+
+-
+  name: Set node proxy configuration without authentication
+  shell: "networksetup -set{{ item }} {{ proxy_device }} {{ proxy_host }} {{ proxy_port }} off"
+  with_items: "{{ proxy_ctx }}"
+  become: true
+  when:
+    - proxy_host is defined and proxy_host != ''
+-
+  name: Sets proxy status
+  shell: "networksetup -set{{ item }}state {{ proxy_device }} {{ proxy_state | default('on') }}"
+  with_items: "{{ proxy_ctx }}"
+  become: true
