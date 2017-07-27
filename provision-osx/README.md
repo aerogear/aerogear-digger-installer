@@ -182,7 +182,15 @@ The list should usually contain a device that handles external connections such 
 
 #### Known Issues
 
-Authenticated proxies are not supported (yet), you will need to manually apply the proxy config by running the command yourself if using one:
+
+Some mac machines might show the following error when using authenticated proxies:
+
+```
+networksetup[17299:4626837] error -25308 attempting to create account and password for proxy: $PROXY_URL
+
+```
+
+If that's the case, you will need to manually apply the proxy config by running the command yourself:
 
 
 ```
