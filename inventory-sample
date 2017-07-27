@@ -3,7 +3,7 @@ master
 macos
 
 [Nodes:vars]
-# OpenShift URL
+# OpenShift URL, if you are using ansible_connection=local then you must specify a master_url, or else it will default to localhost:8443. 
 master_url=
 # OpenShift Credentials
 oc_user=
