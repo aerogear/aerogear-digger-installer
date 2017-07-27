@@ -58,6 +58,9 @@ c.setName(CONTAINER_NAME)
 c.setWorkingDir(WORKDIR)
 c.setArgs(ARGS)
 c.setTtyEnabled(true)
+// command must be empty as the container is able to start JNLP itself.
+// if this is not cleared explicitly, K8s plugin will set it to "/bin/sh -c"
+c.setCommand("")
 containerList = new ArrayList<ContainerTemplate>()
 containerList.add(c)
 
