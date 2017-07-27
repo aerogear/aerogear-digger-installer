@@ -163,8 +163,6 @@ You can switch the proxy status by changing the `proxy_status`variable value to 
 * `proxy_port` - proxy port to be used.
 * `proxy_device` - the proxy network device to use the proxy config from the [list of devices](#list-of-devices).
 * `proxy_ctx` - a list of proxies to be set, defaults to "webproxy" and "securewebproxy", see the full list of [proxy types](#proxy-types)
-* `proxy_user` - proxy username for authentication (optional).
-* `proxy_pass` - proxy password for authentication (optional).
 * `proxy_status` - switches the proxy status (on/off) if defined.
 
 
@@ -187,14 +185,7 @@ The list should usually contain a device that handles external connections such 
 
 #### Known Issues
 
-Some mac machines might show the following error when using authenticated proxies:
-
-```
-networksetup[17299:4626837] error -25308 attempting to create account and password for proxy: $PROXY_URL
-
-```
-
-If that's the case, you will need to manually apply the proxy config by running the command yourself:
+Authenticated proxies are not supported (yet), you will need to manually apply the proxy config by running the command yourself if using one:
 
 
 ```
