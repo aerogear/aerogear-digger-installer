@@ -41,5 +41,5 @@
 
 -
   lineinfile:
-    path: ~/.bash_profile
+    dest: ~/.bash_profile
     line: source "$HOME/.bashrc"
