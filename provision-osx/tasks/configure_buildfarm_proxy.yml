@@ -26,6 +26,22 @@
     - proxy_user is not defined or proxy_user == ''
     - proxy_pass is not defined or proxy_pass == ''
 
+- pause:
+    prompt: |
+      Currently mac machines require that authenticated proxies to be manually configured.
+
+      You can either ssh into the machine and manually run the "networksetup" command (requires root user) or remotely connect to it.
+
+      Sample command:
+
+      networksetup -setwebproxy {{ proxy_device }} {{ proxy_host }} {{ proxy_port }} on {{ proxy_user }} {{ proxy_pass }}
+
+      Hit enter to continue or ctrl + c to cancel
+    when:
+      - proxy_host is defined and proxy_host != ''
+      - proxy_user is defined and proxy_user != ''
+      - proxy_pass is defined and proxy_pass != ''
+
 -
   name: Sets proxy status
   shell: "networksetup -set{{ item }}state {{ proxy_device }} {{ proxy_state | default('on') }}"
