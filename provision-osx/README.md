@@ -155,15 +155,12 @@ Configures a proxy to be used whithin the osx node.
 
 To run this section as a standalone step you must specify the `osx_configure_proxy` tag.
 
-You can switch the proxy status by changing the `proxy_status`variable value to `on` or `off`.
-
 ### Options
 
 * `proxy_host` - proxy url/base hostname to be used.
 * `proxy_port` - proxy port to be used.
 * `proxy_device` - the proxy network device to use the proxy config from the [list of devices](#list-of-devices).
 * `proxy_ctx` - a list of proxies to be set, defaults to "webproxy" and "securewebproxy", see the full list of [proxy types](#proxy-types)
-* `proxy_status` - switches the proxy status (on/off) if defined.
 
 
 #### List of Devices
