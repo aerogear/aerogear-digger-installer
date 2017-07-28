@@ -75,12 +75,19 @@
     dest: /tmp/{{ config_file }}
     force: yes
 
+# Leaving in command below as comment as we can use this once the miniumum supported version of OpenShift is 3.5
+#-
+#  name: "Copy the Android SDK config file to the container"
+#  command: "oc cp --namespace={{ project_name }} /tmp/{{ config_file }} {{ android_sdk_podname }}:/opt/tools/{{ config_file }}"
+#  register: cp_cmd
+
 # install the config file
 -
   name: "Copy the Android SDK config file to the container"
-  command: "oc cp --namespace={{ project_name }} /tmp/{{ config_file }} {{ android_sdk_podname }}:/opt/tools/{{ config_file }}"
-  register: cp_cmd
-  failed_when: cp_cmd.stdout != ""
+  shell: "oc exec -i {{ android_sdk_podname }} --namespace={{ project_name }} -- bash -c 'cat > /opt/tools/{{ config_file }}' < /tmp/{{ config_file }}"
+-
+  name: "Set permission on the file"
+  shell: "oc exec -i {{ android_sdk_podname }} --namespace={{ project_name }} -- bash -c 'chmod 775 /opt/tools/{{ config_file }}'"
 
 -
   name: "Install the Android SDK"
