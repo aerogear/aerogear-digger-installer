@@ -15,7 +15,7 @@
 -
   name: "Restart Jenkins"
   connection: local
-  command: java -jar /tmp/jenkins-cli.jar -remoting -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }} restart
+  command: java -jar /tmp/jenkins-cli.jar -noCertificateCheck -remoting -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }} restart
   listen: restart jenkins
   register: restart_cmd
   failed_when: restart_cmd.rc != 0 and 'NullPointerException' not in restart_cmd.stderr
