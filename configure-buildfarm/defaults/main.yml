@@ -11,34 +11,34 @@ jenkins_plugins:
   -
     name: "ssh-slaves"
     version: 1.20
-    archive: "http://updates.jenkins-ci.org/download/plugins/ssh-slaves/1.20/ssh-slaves.hpi"
+    archive: "https://updates.jenkins-ci.org/download/plugins/ssh-slaves/1.20/ssh-slaves.hpi"
 
   -
     name: "kubernetes"
     version: 0.10
-    archive: "http://updates.jenkins-ci.org/download/plugins/kubernetes/0.10/kubernetes.hpi"
+    archive: "https://updates.jenkins-ci.org/download/plugins/kubernetes/0.10/kubernetes.hpi"
 
   -
     name: "credentials"
     version: 2.1.14
-    archive: "http://updates.jenkins-ci.org/download/plugins/credentials/2.1.14/credentials.hpi"
+    archive: "https://updates.jenkins-ci.org/download/plugins/credentials/2.1.14/credentials.hpi"
 
   -
     name: "job-dsl"
     version: 1.64
-    archive: "http://updates.jenkins-ci.org/download/plugins/job-dsl/1.64/job-dsl.hpi"
+    archive: "https://updates.jenkins-ci.org/download/plugins/job-dsl/1.64/job-dsl.hpi"
 
   -
     name: "android-signing"
     version: 2.2.4
-    archive: "http://updates.jenkins-ci.org/download/plugins/android-signing/2.2.4/android-signing.hpi"
+    archive: "https://updates.jenkins-ci.org/download/plugins/android-signing/2.2.4/android-signing.hpi"
 
   -
     name: "token-macro"
     version: 2.1
-    archive: "http://updates.jenkins-ci.org/download/plugins/token-macro/2.1/token-macro.hpi"   
+    archive: "https://updates.jenkins-ci.org/download/plugins/token-macro/2.1/token-macro.hpi"   
 
   -
     name: "xcode-plugin"
-    version: 2.0.1
-    archive: "https://github.com/aerogear/xcode-plugin/releases/download/2.0.1-digger/xcode-plugin.hpi"
+    version: 2.0.2
+    archive: "https://github.com/aerogear/xcode-plugin/releases/download/2.0.2-digger/xcode-plugin.hpi"
