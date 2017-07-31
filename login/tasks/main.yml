@@ -12,30 +12,8 @@
 # We want to be able to log in as a developer, but we might also want to log in as a sys admin (we dont as of yet).
 -
   name: "Login as user using the OpenShift command line tool"
-  command: 'oc login --username={{ oc_user }} --password="{{ oc_password }}"'
+  command: 'oc login {{ master_url | default("https://localhost:8443") }} --username={{ oc_user }} --password="{{ oc_password }}" {{ skip_tls | default("false") | bool | ternary("--insecure-skip-tls-verify"," ") }}'
   register: output
-  when:
-    - ansible_connection != 'local'
-
-# this one is a workaround for OpenShift dedicated, since we cant ssh to the nodes we must execute this locally and log in via the cli.
--
-  name: "Login as remote user using the OpenShift command line tool"
-  command: 'oc login {{ master_url }} --username={{ oc_user }} --password="{{ oc_password }}"'
-  register: output
-  when:
-    - master_url is defined
-    - ansible_connection == 'local'
-    - target is undefined or target != 'cluster_up'
-
--
-  name: "Login as remote user using the OpenShift command line tool"
-  command: 'oc login {{ master_url }} --username={{ oc_user }} --password="{{ oc_password }}" --insecure-skip-tls-verify'
-  register: output
-  when:
-    - master_url is defined
-    - ansible_connection == 'local'
-    - target is defined
-    - target == 'cluster_up'
 -
   debug: var=output
   when: output|failed

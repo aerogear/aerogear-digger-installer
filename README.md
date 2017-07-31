@@ -49,6 +49,22 @@ Note that `mkdir` and `chmod` commands above should be executed in the Docker-ma
 
 You can find templates for creating PV's backed by glusterFS or NFS in pv-sample-templates/android-sdk-linux and pv-sample-templates/jenkins
 
+### Notes about logging in to the master node
+
+1. If you are running the playbook locally but pointing at a remote master node then master_url must be set when running the playbook. 
+
+2. If you are running the playbook remotely (i.e. while in an ssh session) then master_url does not need to be set as the default address for oc login is https://localhost:8443.
+
+#### Using insecure connections
+
+If you wish to use an insecure connection you can pass the skip_tls environment variable which will bypass the certificate check when logging in to openshift. 
+
+To pass it with the ansible-playbook, it should look like:
+
+```
+-e "skip_tls=true"
+```
+
 ### Execute the playbook:
 
 #### Example command line to execute aerogear-digger ansible install
