@@ -74,6 +74,9 @@
     src: sample_cfg.j2
     dest: /tmp/{{ config_file }}
     force: yes
+  vars: 
+    components: "{{ android_sdk_components }}"
+    keystore: "{{ android_debug_keystore }}"
 
 # Leaving in command below as comment as we can use this once the miniumum supported version of OpenShift is 3.5
 #-
