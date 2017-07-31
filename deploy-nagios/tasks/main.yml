@@ -32,7 +32,7 @@
     nagios_image_version: "{{ nagios_image_def[0][0].image }}"
 
 - 
-  name: "Update local nagios templae with image version and tag"
+  name: "Update local nagios template with image version and tag"
   template:
     src: nagios-template.j2
     dest: "{{ buildfarm_templates_dir }}/nagios-template.json"
@@ -75,7 +75,7 @@
   changed_when: nagios_create_result.rc == 0 or (nagios_create_result.rc == 1 and 'created' in nagios_create_result.stdout)
 -
   name: "Poll for Pods to become ready"
-  command: oc get pods --namespace={{ project_name }} --output jsonpath='{.items[*].status.conditions[?(@.type=="Ready")].status}'
+  command: oc get dc nagios --namespace={{ project_name }} --output jsonpath='{.status.conditions[?(@.type=="Available")].status}'
   register: poll_result
   until: "'False' not in poll_result.stdout"
   retries: 60
