@@ -42,7 +42,7 @@
 
 -
   name: "Poll for Pods to become ready"
-  command: oc get pods --namespace={{ project_name }} --output jsonpath='{.items[*].status.conditions[?(@.type=="Ready")].status}'
+  command: oc get dc android-sdk --namespace={{ project_name }} --output jsonpath='{.status.conditions[?(@.type=="Available")].status}'
   register: poll_result
   until: "'False' not in poll_result.stdout"
   retries: 60
