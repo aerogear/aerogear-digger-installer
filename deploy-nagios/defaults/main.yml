@@ -1,3 +1,4 @@
+---
 # nagios environment variables
 smtp_server: localhost
 smtp_username: username
