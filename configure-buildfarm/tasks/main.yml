@@ -16,6 +16,7 @@
     - plugins
     - proxy
     - config
+    - security
 
 - name: "Setup directory for for community resources"
   set_fact:
@@ -25,6 +26,7 @@
     - plugins
     - proxy
     - config
+    - security
 
 -
   name: "Get jenkins url"
@@ -35,11 +37,12 @@
     - plugins
     - proxy
     - config
+    - security
 
 - pause:
     prompt: |
          Note: The following step is required. Playbook run will fail if skipped.
-         
+
          Jenkins was successfully installed. In order to configure Jenkins and continue with the installation please add your current public key (~/.ssh/id_rsa.pub) in the input box 'SSH Public Keys' at the link below:
          {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }}/user/{{ jenkins_username | default("admin") }}/configure
 
@@ -48,6 +51,7 @@
     - plugins
     - proxy
     - config
+    - security
 
 
 - name: "Get the jenkins client cli jar"
@@ -61,6 +65,7 @@
     - plugins
     - proxy
     - config
+    - security
 
 -
   name: "Create Groovy script from template"
@@ -154,3 +159,11 @@
   tags:
     - plugins
 
+-
+  name: "Enable Agent → Master Access Control"
+  command: java -jar /tmp/jenkins-cli.jar -remoting -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }}  groovy {{ groovy_script_dir }}/configure-slave-subsystem.groovy
+  connection: local
+  register: master_slave_output
+  changed_when: '"Done" in master_slave_output.stdout'
+  tags:
+    - security
