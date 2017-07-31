@@ -34,3 +34,11 @@
     - {role: deploy-nagios, tags: deploy-nagios}
   vars_files:
     - "vars/buildfarm.yml"
+
+- name: "Print info"
+  hosts: master
+  remote_user: root
+  roles:
+    - {role: print-info, tags: print-info}
+  vars_files:
+    - "vars/buildfarm.yml"

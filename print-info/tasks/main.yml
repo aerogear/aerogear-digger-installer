@@ -1,0 +1,36 @@
+---
+
+-
+  name: "Get jenkins url"
+  shell: "oc get route jenkins --namespace={{ project_name }} -o jsonpath='{.spec.host}'"
+  register: jenkins_route_output
+-
+  name: "Print Jenkins login information"
+  debug: msg="Your Jenkins instance is available at {{ jenkins_route_output.stdout }}.
+              Login credentials by default are username=admin and password=password.
+              Please note that the login credentials could have been changed if this is not a fresh installation."
+
+- block:
+    -
+      name: "Get Nagios url"
+      shell: "oc get route nagios --namespace={{ project_name }} -o jsonpath='{.spec.host}'"
+      register: nagios_route_output
+
+    -
+      name: "Get Nagios username"
+      shell: "oc get dc nagios --namespace={{ project_name }} -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name==\"NAGIOS_USER\")].value}'"
+      register: username_output
+
+    -
+      name: "Get Nagios password"
+      shell: "oc get dc nagios --namespace={{ project_name }} -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name==\"NAGIOS_PASSWORD\")].value}'"
+      register: password_output
+
+    -
+      name: "Print Nagios login information"
+      debug: msg="Your Nagios instance is available at {{ nagios_route_output.stdout }}.
+                  Credentials are username={{ username_output.stdout }} and password={{ password_output.stdout }} ."
+
+  rescue:
+    -
+      debug: msg="Unable to get Nagios route and/or credentials information. It is safe to ignore this problem if you are not using Nagios."
