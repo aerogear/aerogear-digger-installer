@@ -7,18 +7,71 @@ jenkins_home: /var/lib/jenkins
 
 concurrent_android_builds: 10
 
+# List of plugins required and their dependencies. Note, we don't need to support dependencies for
+# kubernetes plugin since these will be packaged
+
 jenkins_plugins:
+
+  # Required by job-dsl
+  -
+    name: "managed-scripts"
+    version: 1.3
+    archive: "https://updates.jenkins-ci.org/download/plugins/managed-scripts/1.3/managed-scripts.hpi"
+
+  # Required by managed-scripts and job-dsl
+  -
+    name: "config-file-provider"
+    version: 2.15.4
+    archive: "https://updates.jenkins-ci.org/download/plugins/config-file-provider/2.15.4/config-file-provider.hpi"
+
+  # Required by managed-scripts. Has no dependencies.
+  -
+    name: "token-macro"
+    version: 2.0
+    archive: "https://updates.jenkins-ci.org/download/plugins/token-macro/2.0/token-macro.hpi"
+
+  # Required dependency for job-dsl and config-file-provider. Has no dependencies
+  -
+    name: "structs"
+    version: 1.6
+    archive: "https://updates.jenkins-ci.org/download/plugins/structs/1.6/structs.hpi"
+
+  # Optional dependency on android-signing plugin. Packaging later version here
+  # due to security vulnerability in the minimum required version
+  -
+    name: "job-dsl"
+    version: 1.64
+    archive: "https://updates.jenkins-ci.org/download/plugins/job-dsl/1.64/job-dsl.hpi"
+
+  # Required by android-signing plugin, config-file-provider, ssh-credentials and ssh-slaves
+  -
+    name: "credentials"
+    version: 2.1.4
+    archive: "https://updates.jenkins-ci.org/download/plugins/credentials/2.1.4/credentials.hpi"
+
+ # Plugins required directly by buildfarm
+
+  -
+    name: "ssh-credentials"
+    version: 1.13
+    archive: "https://updates.jenkins-ci.org/download/plugins/ssh-credentials/1.13/ssh-credentials.hpi"
+
   -
     name: "ssh-slaves"
     version: 1.20
-    archive: "http://updates.jenkins-ci.org/download/plugins/ssh-slaves/1.20/ssh-slaves.hpi"
+    archive: "https://updates.jenkins-ci.org/download/plugins/ssh-slaves/1.20/ssh-slaves.hpi"
 
   -
     name: "kubernetes"
     version: 0.10
-    archive: "http://updates.jenkins-ci.org/download/plugins/kubernetes/0.10/kubernetes.hpi"
+    archive: "https://updates.jenkins-ci.org/download/plugins/kubernetes/0.10/kubernetes.hpi"
 
   -
     name: "android-signing"
     version: 2.2.4
-    archive: "http://updates.jenkins-ci.org/download/plugins/android-signing/2.2.4/android-signing.hpi"
+    archive: "https://updates.jenkins-ci.org/download/plugins/android-signing/2.2.4/android-signing.hpi"
+
+  -
+    name: "xcode-plugin"
+    version: 2.0.2
+    archive: "https://github.com/aerogear/xcode-plugin/releases/download/2.0.2-digger/xcode-plugin.hpi"
