@@ -57,6 +57,7 @@
     dest: /tmp/jenkins-cli.jar
     force: yes
     mode: 0775
+    validate_certs: no
   tags:
     - plugins
     - proxy
@@ -145,7 +146,7 @@
 
 -
   name: "Install plugins"
-  shell: "oc cp --namespace={{ project_name }} /tmp/{{ item.name }}.hpi $(oc get pods --namespace={{ project_name }} | grep Running | grep jenkins- | awk '{print $1}' ):/{{ jenkins_home }}/plugins/"
+  command: java -jar /tmp/jenkins-cli.jar -remoting -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }}  install-plugin "{{ item.archive }}"
   with_items: "{{ jenkins_plugins }}"
   when: plugins_output.stdout.find( item.name) != -1
   register: installed_plugins
