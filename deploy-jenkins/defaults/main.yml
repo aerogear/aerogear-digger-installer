@@ -2,3 +2,5 @@
 
 project_name: jenkins
 enable_oauth: false
+master_memory_limit: 3Gi
+master_volume_capacity: 40Gi
