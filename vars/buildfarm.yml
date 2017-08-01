@@ -19,9 +19,9 @@ deployments:
     containers:
     - name: "android-sdk"
       image: "docker.io/aerogear/digger-android-sdk-image:latest"
-  - name: "digger-nagios"
+  - name: "nagios"
     containers:
-    - name: "digger-nagios"
+    - name: "nagios"
       image: "docker.io/aerogear/digger-nagios:dev"
 # the Jenkins username
 macos_user: jenkins
