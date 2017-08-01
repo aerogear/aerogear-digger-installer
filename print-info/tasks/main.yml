@@ -4,11 +4,6 @@
   name: "Get jenkins url"
   shell: "oc get route jenkins --namespace={{ project_name }} -o jsonpath='{.spec.host}'"
   register: jenkins_route_output
--
-  name: "Print Jenkins login information"
-  debug: msg="Your Jenkins instance is available at {{ jenkins_route_output.stdout }}.
-              Login credentials by default are username=admin and password=password.
-              Please note that the login credentials could have been changed if this is not a fresh installation."
 
 - block:
     -
@@ -19,18 +14,32 @@
     -
       name: "Get Nagios username"
       shell: "oc get dc nagios --namespace={{ project_name }} -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name==\"NAGIOS_USER\")].value}'"
-      register: username_output
+      register: nagios_username_output
 
     -
       name: "Get Nagios password"
       shell: "oc get dc nagios --namespace={{ project_name }} -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name==\"NAGIOS_PASSWORD\")].value}'"
-      register: password_output
+      register: nagios_password_output
 
     -
-      name: "Print Nagios login information"
-      debug: msg="Your Nagios instance is available at {{ nagios_route_output.stdout }}.
-                  Credentials are username={{ username_output.stdout }} and password={{ password_output.stdout }} ."
+      # we cannot use the registered variables outside. as a workaround, we set these vars as facts.
+      set_fact:
+        nagios_route: "{{ nagios_route_output.stdout }}"
+        nagios_username: "{{ nagios_username_output.stdout }}"
+        nagios_password: "{{ nagios_password_output.stdout }}"
 
   rescue:
     -
       debug: msg="Unable to get Nagios route and/or credentials information. It is safe to ignore this problem if you are not using Nagios."
+
+-
+  name: "Print Jenkins login information"
+  debug: msg="Your Jenkins instance is available at {{ jenkins_route_output.stdout }}.
+              Login credentials by default are username=admin and password=password.
+              Please note that the login credentials could have been changed if this is not a fresh installation."
+
+-
+  name: "Print Nagios login information"
+  debug: msg="Your Nagios instance is available at {{ nagios_route }}.
+              Credentials are username={{ nagios_username }} and password={{ nagios_password }}"
+  when: nagios_route is defined
