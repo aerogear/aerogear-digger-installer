@@ -13,7 +13,7 @@
 -
   name: "Read nagios definition"
   set_fact:
-    nagios_image_def: "{{ deployments | selectattr('name', 'match', '^digger-nagios$') | map(attribute='containers') | list }}"
+    nagios_image_def: "{{ deployments | selectattr('name', 'match', '^nagios$') | map(attribute='containers') | list }}"
 
 -
   name: "Get jenkins url"
