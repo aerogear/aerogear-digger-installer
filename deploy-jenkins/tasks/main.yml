@@ -16,7 +16,7 @@
 
 -
   name: "Deploy the Jenkins Instance"
-  command: "oc new-app --namespace {{ project_name }} -f {{ buildfarm_templates_dir }}/jenkins-persistent-template.json -p ENABLE_OAUTH={{ enable_oauth }} -p MEMORY_LIMIT={{ master_memory_limit }}"
+  command: "oc new-app --namespace {{ project_name }} -f {{ buildfarm_templates_dir }}/jenkins-persistent-template.json -p ENABLE_OAUTH={{ enable_oauth }} -p MEMORY_LIMIT={{ master_memory_limit }} -p VOLUME_CAPACITY={{ master_volume_capacity }}"
   register: jenkins_create_result
   failed_when:
     - jenkins_create_result.stderr and jenkins_create_result.stderr != '' and 'already exists' not in jenkins_create_result.stderr
