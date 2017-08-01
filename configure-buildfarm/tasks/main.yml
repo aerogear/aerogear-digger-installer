@@ -39,12 +39,18 @@
     - config
     - security
 
+- name: "Get node public key"
+  shell: cat ~/.ssh/id_rsa.pub
+  register: public_key
+
 - pause:
     prompt: |
          Note: The following step is required. Playbook run will fail if skipped.
 
-         Jenkins was successfully installed. In order to configure Jenkins and continue with the installation please add your current public key (~/.ssh/id_rsa.pub) in the input box 'SSH Public Keys' at the link below:
+         Jenkins was successfully installed. In order to configure Jenkins and continue with the installation please add the below public key to the input box 'SSH Public Keys' at the link below:
          {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }}/user/{{ jenkins_username | default("admin") }}/configure
+
+         {{ public_key.stdout }}
 
          After you've added your Public SSH key, hit enter to continue or ctrl + c to cancel.
   tags:
@@ -55,7 +61,6 @@
 
 
 - name: "Get the jenkins client cli jar"
-  connection: local
   get_url:
     url: "{{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }}/jnlpJars/jenkins-cli.jar"
     dest: /tmp/jenkins-cli.jar
@@ -73,7 +78,6 @@
     src: proxy-config.j2
     dest: "/tmp/proxy-config.groovy"
     force: yes
-  connection: local
   register: proxy_task
   when:
     - proxy_host is defined
@@ -87,7 +91,6 @@
   name: "Configure HTTP Proxy Settings"
   command: java -jar /tmp/jenkins-cli.jar -remoting -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }}  groovy /tmp/proxy-config.groovy
   when: not proxy_task|skipped
-  connection: local
   tags:
      - proxy
 
@@ -110,23 +113,28 @@
     src: kubernetes-plugin-config.j2
     dest: "/tmp/kubernetes-plugin-config.groovy"
     force: yes
-  connection: local
   tags:
     - config
 
 - name: "Configure Kubernetes plugin"
   shell: "java -jar /tmp/jenkins-cli.jar -remoting -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }}  groovy  /tmp/kubernetes-plugin-config.groovy"
-  connection: local
   register: output
   failed_when: output.stderr != ''
   tags:
      - config
 
+- name: "Copy configure plugins script"
+  copy:
+     src: "{{ groovy_script_dir }}/configure-plugins.groovy"
+     dest: "/tmp/configure-plugins.groovy"
+     mode: 0755
+  tags:
+    - config
+
 -
   name: "Get list of missing and unmet Jenkins plugins"
-  command: java -jar /tmp/jenkins-cli.jar -remoting -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }}  groovy {{ groovy_script_dir }}/configure-plugins.groovy  '{{ jenkins_plugins | to_json | replace('\n', '') }}'
+  command: java -jar /tmp/jenkins-cli.jar -remoting -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }}  groovy /tmp/configure-plugins.groovy  '{{ jenkins_plugins | to_json | replace('\n', '') }}'
   register: plugins_output
-  connection: local
   changed_when: false
   tags:
     - plugins
@@ -136,14 +144,13 @@
   get_url:
     url: "{{ item.archive }}"
     dest: /tmp/{{item.name}}.hpi
-    mode: 775
+    mode: 0775
   environment:
     http_proxy: "{{ proxy_url | default('') }}"
     https_proxy: "{{ proxy_url | default('') }}"
   with_items: "{{ jenkins_plugins }}"
   when: plugins_output.stdout.find( item.name) != -1
   register: fetched_plugins
-  connection: local
   notify:
     - remove plugins
   tags:
@@ -155,14 +162,21 @@
   with_items: "{{ jenkins_plugins }}"
   when: plugins_output.stdout.find( item.name) != -1
   register: installed_plugins
-  connection: local
   tags:
     - plugins
 
+
+- name: "Copy configure slave script"
+  copy:
+     src: "{{ groovy_script_dir }}/configure-plugins.groovy"
+     dest: "/tmp/configure-plugins.groovy"
+     mode: 0755
+  tags:
+    - config
+
 -
   name: "Enable Agent → Master Access Control"
-  command: java -jar /tmp/jenkins-cli.jar -remoting -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }}  groovy {{ groovy_script_dir }}/configure-slave-subsystem.groovy
-  connection: local
+  command: java -jar /tmp/jenkins-cli.jar -remoting -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }}  groovy /tmp/configure-slave-subsystem.groovy
   register: master_slave_output
   changed_when: '"Done" in master_slave_output.stdout'
   tags:
