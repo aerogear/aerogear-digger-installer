@@ -36,9 +36,6 @@
         force: yes
         validate_certs: no
         mode: 0775
-      environment:
-        http_proxy: "{{ proxy_url | default('') }}"
-        https_proxy: "{{ proxy_url | default('') }}"
 
     -
       name: Retrieve provided private key
@@ -115,7 +112,7 @@
       register: create_node
       when: create_node.rc != 0 and create_node.stderr.find('already exists') >= 0
     connection: local
-  when: 
+  when:
   - credential_private_key_path is defined
   - credential_private_key_path != ''
   - credential_public_key_path is defined
