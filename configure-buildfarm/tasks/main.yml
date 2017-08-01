@@ -39,13 +39,18 @@
     - config
     - security
 
+- name: "Get node public key"
+  shell: cat ~/.ssh/id_rsa.pub
+  register: public_key
+
 - pause:
     prompt: |
          Note: The following step is required. Playbook run will fail if skipped.
 
-         Jenkins was successfully installed. In order to configure Jenkins and continue with the installation please add the public key (~/.ssh/id_rsa.pub)
-         either from the master node (or from this machine if running ansible_connection=local) in the input box 'SSH Public Keys' at the link below:
+         Jenkins was successfully installed. In order to configure Jenkins and continue with the installation please add the below public key to the input box 'SSH Public Keys' at the link below:
          {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }}/user/{{ jenkins_username | default("admin") }}/configure
+
+         {{ public_key.stdout }}
 
          After you've added your Public SSH key, hit enter to continue or ctrl + c to cancel.
   tags:
