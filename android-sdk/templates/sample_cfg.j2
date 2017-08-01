@@ -6,13 +6,14 @@
 {% endfor %}
 {% endfor %}
 
+ {# NOTE: the order of those entries are important, do not change the orders #}
 [keystore]
+alias=AndroidDebugKey
 name={{ keystore.name | default('AG') }}
 unit={{ keystore.unit | default('AeroGear') }} 
 org={{ keystore.org | default('RedHat') }}
 loc={{ keystore.loc | default('Waterford') }}
 state={{ keystore.state | default('WD') }}
 country={{ keystore.country | default('IRL') }}
-alias=androiddebugkey
 storepass=android
 keypass=android
