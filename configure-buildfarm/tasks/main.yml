@@ -136,7 +136,10 @@
   get_url:
     url: "{{ item.archive }}"
     dest: /tmp/{{item.name}}.hpi
-    mode: 775
+    mode: 0775
+  environment:
+    http_proxy: "{{ proxy_url | default('') }}"
+    https_proxy: "{{ proxy_url | default('') }}"
   with_items: "{{ jenkins_plugins }}"
   when: plugins_output.stdout.find( item.name) != -1
   register: fetched_plugins
