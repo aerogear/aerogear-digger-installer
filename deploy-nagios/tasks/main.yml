@@ -73,11 +73,13 @@
   failed_when:
     - nagios_create_result.stderr and nagios_create_result.stderr != '' and 'already exists' not in nagios_create_result.stderr
   changed_when: nagios_create_result.rc == 0 or (nagios_create_result.rc == 1 and 'created' in nagios_create_result.stdout)
+
 -
   name: "Poll for Pods to become ready"
-  command: oc get dc nagios --namespace={{ project_name }} --output jsonpath='{.status.conditions[?(@.type=="Available")].status}'
+  command: oc get dc nagios --namespace={{ project_name }} --output jsonpath='{.status.availableReplicas}'
   register: poll_result
-  until: "'False' not in poll_result.stdout"
+  until: poll_result.stdout == "1" and poll_result.stderr == ""
+  failed_when: '"error executing jsonpath" not in poll_result.stderr and poll_result.stdout != "1" and poll_result.stdout != "0"'
   retries: 60
   delay: 10
   when: nagios_create_result|changed

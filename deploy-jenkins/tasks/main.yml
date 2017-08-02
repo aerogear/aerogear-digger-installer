@@ -5,7 +5,7 @@
   name: "Update local jenkins-persistent template"
   template:
       src: jenkins-persistent-template.j2
-      dest: /tmp/jenkins-persistent-template.json
+      dest: "{{ buildfarm_templates_dir }}/jenkins-persistent-template.json"
 
 # Deploy Jenkins instance
 -
@@ -24,10 +24,10 @@
 
 -
   name: "Poll for Pods to become ready"
-  command: oc get dc jenkins --namespace={{ project_name }} --output jsonpath='{.status.conditions[?(@.type=="Available")].status}'
+  command: oc get dc jenkins --namespace={{ project_name }} --output jsonpath='{.status.availableReplicas}'
   register: poll_result
-  until: "'False' not in poll_result.stdout"
+  until: poll_result.stdout == "1" and poll_result.stderr == ""
+  failed_when: '"error executing jsonpath" not in poll_result.stderr and poll_result.stdout != "1" and poll_result.stdout != "0"'
   retries: 60
   delay: 10
   when: jenkins_create_result|changed
-
