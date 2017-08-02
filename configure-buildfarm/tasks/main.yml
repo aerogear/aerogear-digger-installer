@@ -168,8 +168,8 @@
 
 - name: "Copy configure slave script"
   copy:
-     src: "{{ groovy_script_dir }}/configure-plugins.groovy"
-     dest: "/tmp/configure-plugins.groovy"
+     src: "{{ groovy_script_dir }}/configure-slave-subsystem.groovy"
+     dest: "/tmp/configure-slave-subsystem.groovy"
      mode: 0755
   tags:
     - config
