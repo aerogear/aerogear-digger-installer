@@ -136,7 +136,6 @@
   name: "Sync Android Platform Versions via config"
   command: "oc rsh --namespace={{ project_name }} {{ android_sdk_podname }} androidctl sync /opt/tools/{{ config_file }}"
   register: rsh_cmd
-  become: true
   failed_when: "'Traceback' in rsh_cmd.stdout or 'Common Arguments' in rsh_cmd.stdout"
   tags:
     - install-sdk
