@@ -45,7 +45,7 @@ homebrew_taps:
 - caskroom/cask
 
 xcode_versions:
-- 8.3
+- '8.3.3'
 
 apple_wwdr_cert_url: http://developer.apple.com/certificationauthority/AppleWWDRCA.cer
 apple_wwdr_cert_file_name: AppleWWDRCA.cer
