@@ -64,7 +64,7 @@
   name: Configure terminal encoding for CocoaPods
   lineinfile:
     dest: ~/.bashrc
-    line: 'export LANG=en_US.UTF-8'
+    line: "export LANG={{ lang_env_var }}"
 
 -
   name: Install gem packages
