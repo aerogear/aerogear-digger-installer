@@ -1,5 +1,41 @@
 -
+  stat:
+    path: ~/.profile
+  register: profile_file
+
+-
+  stat:
+    path: ~/.bashrc
+  register: bash_file
+
+-
+  name: Create user profile file
+  file:
+    path: ~/.profile
+    state: touch
+  when: profile_file.stat.exists == False
+
+-
+  name: Create user bash file
+  file:
+    path: ~/.bashrc
+    state: touch
+  when: bash_file.stat.exists == False
+
+-
+  name: Configure bash profile PATH
+  lineinfile:
+    dest: ~/.bashrc
+    line: "export PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+
+-
   name: Configure bash profile language encoding
   lineinfile:
     dest: ~/.bashrc
     line: "export LANG={{ buildfarm_lang_env_var }}"
+
+-
+  name: Configure profile file
+  lineinfile:
+    dest: ~/.profile
+    line: "source ~/.bashrc"
