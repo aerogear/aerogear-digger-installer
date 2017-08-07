@@ -1,13 +1,11 @@
 ---
 
 - name: "Run initial minimum requirement checks"
-  hosts: localhost
-  remote_user: root
+  hosts: master
   tasks:
     -
       name: "Check Java is installed on path of local machine"
       command: which java
-      connection: local
 
 - name: "Deploy Digger"
   hosts: master
