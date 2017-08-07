@@ -1,3 +1,5 @@
+---
+
 -
   stat:
     path: ~/.profile
@@ -5,7 +7,7 @@
 
 -
   stat:
-    path: ~/.bashrc
+    path: ~/.bash_profile
   register: bash_file
 
 -
@@ -18,24 +20,24 @@
 -
   name: Create user bash file
   file:
-    path: ~/.bashrc
+    path: ~/.bash_profile
     state: touch
   when: bash_file.stat.exists == False
 
 -
   name: Configure bash profile PATH
   lineinfile:
-    dest: ~/.bashrc
+    dest: ~/.bash_profile
     line: "export PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 
 -
   name: Configure bash profile language encoding
   lineinfile:
-    dest: ~/.bashrc
+    dest: ~/.bash_profile
     line: "export LANG={{ buildfarm_lang_env_var }}"
 
 -
   name: Configure profile file
   lineinfile:
     dest: ~/.profile
-    line: "source ~/.bashrc"
+    line: "source ~/.bash_profile"
