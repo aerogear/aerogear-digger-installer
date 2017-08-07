@@ -78,4 +78,4 @@ proxy_ctx:
   - webproxy
   - securewebproxy
 
-lang_env_var: 'en_US.UTF-8'
+buildfarm_lang_env_var: 'en_US.UTF-8'

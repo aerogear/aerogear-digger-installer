@@ -1,0 +1,5 @@
+-
+  name: Configure terminal language encoding
+  lineinfile:
+    dest: ~/.bashrc
+    line: "export LANG={{ buildfarm_lang_env_var }}"

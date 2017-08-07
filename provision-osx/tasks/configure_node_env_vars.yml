@@ -27,3 +27,9 @@
     shell: "{{ rvm_path.stdout }} && echo $PATH:/usr/local/bin:/usr/local/sbin"
     register: buildfarm_env_path
     changed_when: False
+
+  -
+    name: Get build farm env LANG
+    shell: "source ~/.bash_profile && echo $LANG"
+    register: buildfarm_env_lang
+    changed_when: False
