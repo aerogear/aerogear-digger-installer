@@ -12,7 +12,7 @@
   remote_user: root
   roles:
     - {role: deploy-jenkins, tags: deploy-jenkins }
-    - {role: android-sdk, when: "'android' in digger_platforms", tags: android-sdk}
+    - {role: android-sdk,  tags: android-sdk}
     - {role: configure-buildfarm, tags: configure-buildfarm}
   vars_files:
     - "vars/buildfarm.yml"
@@ -21,7 +21,7 @@
   hosts: macos
   remote_user: "{{ macos_user }}"
   roles:
-    - {role: provision-osx, when: "'ios' in digger_platforms", tags: provision-osx}
+    - {role: provision-osx,  tags: provision-osx}
   vars_files:
     - "vars/buildfarm.yml"
 
