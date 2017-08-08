@@ -2,20 +2,8 @@
 
 -
   stat:
-    path: ~/.profile
-  register: profile_file
-
--
-  stat:
     path: ~/.bash_profile
   register: bash_file
-
--
-  name: Create user profile file
-  file:
-    path: ~/.profile
-    state: touch
-  when: profile_file.stat.exists == False
 
 -
   name: Create user bash file
@@ -23,12 +11,6 @@
     path: ~/.bash_profile
     state: touch
   when: bash_file.stat.exists == False
-
--
-  name: Configure bash profile PATH
-  lineinfile:
-    dest: ~/.bash_profile
-    line: "export PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 
 -
   name: Configure bash profile language encoding
