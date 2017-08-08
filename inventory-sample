@@ -9,9 +9,6 @@ master_url=
 oc_user=
 oc_password=
 
-# Digger Variables
-digger_platforms="android,ios"
-
 # provide proxy info if required
 proxy_host=
 proxy_port=
