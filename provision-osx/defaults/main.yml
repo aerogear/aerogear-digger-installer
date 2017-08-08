@@ -77,3 +77,5 @@ proxy_device: Ethernet
 proxy_ctx:
   - webproxy
   - securewebproxy
+
+buildfarm_lang_env_var: "en_US.UTF-8"

@@ -10,3 +10,4 @@
     GEM_HOME: "{{ buildfarm_env_gem.stdout }}"
     http_proxy: "{{ proxy_url | default('') }}"
     https_proxy: "{{ proxy_url | default('') }}"
+    LANG: "{{ buildfarm_lang_env_var }}"

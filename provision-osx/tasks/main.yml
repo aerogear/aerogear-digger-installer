@@ -1,5 +1,8 @@
 ---
 
+- include: configure_base_system.yml
+  tags: osx_base_system
+
 - include: install_homebrew.yml
   tags: osx_install_homebrew
   

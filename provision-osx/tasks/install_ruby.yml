@@ -58,15 +58,6 @@
     https_proxy: "{{ proxy_url | default('') }}"
 
 -
-  # CocoaPods require the terminal to use UTF-8 encoding
-  # if we don't have this setting, doing "pod install" on
-  # some projects fail (e.g. https://github.com/feedhenry-templates/helloworld-ios-swift)
-  name: Configure terminal encoding for CocoaPods
-  lineinfile:
-    dest: ~/.bashrc
-    line: 'export LANG=en_US.UTF-8'
-
--
   name: Install gem packages
   shell: "source ~/.bash_profile && gem install --no-ri --no-rdoc {{item.name}} -v {{ item.version | default('\"\"') }}"
   args:
