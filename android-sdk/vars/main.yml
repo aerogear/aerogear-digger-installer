@@ -30,6 +30,14 @@ android_sdk_components:
     - m2repository
   "extras:android":
     - m2repository
+  "extras:m2repository:com:android:support:constraint:constraint-layout":
+    - 1.0.0
+    - 1.0.1
+    - 1.0.2
+  "extras:m2repository:com:android:support:constraint:constraint-layout-solver":
+    - 1.0.0
+    - 1.0.2
+
 # configurations for the default Android debug keystore
 android_debug_keystore:
   name: AG
