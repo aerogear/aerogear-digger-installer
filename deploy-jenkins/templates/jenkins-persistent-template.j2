@@ -262,7 +262,7 @@
       "name": "ENABLE_OAUTH",
       "displayName": "Enable OAuth in Jenkins",
       "description": "Whether to enable OAuth OpenShift integration. If false, the static account 'admin' will be initialized with the password 'password'.",
-      "value": "true"
+      "value": "{{ enable_oauth | default('false') }}"
     },
     {
       "name": "JVM_ARCH",
@@ -274,13 +274,13 @@
       "name": "MEMORY_LIMIT",
       "displayName": "Memory Limit",
       "description": "Maximum amount of memory the container can use.",
-      "value": "3Gi"
+      "value": "{{ master_memory_limit | default('3Gi') }}"
     },
     {
       "name": "VOLUME_CAPACITY",
       "displayName": "Volume Capacity",
       "description": "Volume space available for data, e.g. 512Mi, 2Gi.",
-      "value": "40Gi",
+      "value": "{{ master_volume_capacity | default('40Gi') }}",
       "required": true
     },
     {
