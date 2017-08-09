@@ -42,6 +42,11 @@
 - name: "Get node public key"
   shell: cat ~/.ssh/id_rsa.pub
   register: public_key
+  tags:
+    - plugins
+    - proxy
+    - config
+    - security
 
 - pause:
     prompt: |
@@ -123,6 +128,23 @@
   tags:
      - config
 
+- name: "Copy configure slave script"
+  copy:
+     src: "{{ groovy_script_dir }}/configure-slave-subsystem.groovy"
+     dest: "/tmp/configure-slave-subsystem.groovy"
+     mode: 0755
+  tags:
+    - config
+    - security
+
+-
+  name: "Enable Agent → Master Access Control"
+  command: java -jar /tmp/jenkins-cli.jar -remoting -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }}  groovy /tmp/configure-slave-subsystem.groovy
+  register: master_slave_output
+  changed_when: '"Done" in master_slave_output.stdout'
+  tags:
+    - security
+
 - name: "Copy configure plugins script"
   copy:
      src: "{{ groovy_script_dir }}/configure-plugins.groovy"
@@ -156,6 +178,7 @@
   tags:
     - plugins
 
+# Leave this task as the last one as it will restart Jenkins
 -
   name: "Install plugins and restart Jenkins server"
   command: "java -jar /tmp/jenkins-cli.jar -remoting -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }} install-plugin /tmp/{{ item.name }}.hpi {{ (item == jenkins_plugins[-1]) | ternary('-restart','') }}"
@@ -164,20 +187,3 @@
   register: installed_plugins
   tags:
     - plugins
-
-
-- name: "Copy configure slave script"
-  copy:
-     src: "{{ groovy_script_dir }}/configure-slave-subsystem.groovy"
-     dest: "/tmp/configure-slave-subsystem.groovy"
-     mode: 0755
-  tags:
-    - config
-
--
-  name: "Enable Agent → Master Access Control"
-  command: java -jar /tmp/jenkins-cli.jar -remoting -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }}  groovy /tmp/configure-slave-subsystem.groovy
-  register: master_slave_output
-  changed_when: '"Done" in master_slave_output.stdout'
-  tags:
-    - security
