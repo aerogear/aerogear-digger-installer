@@ -51,9 +51,9 @@ You can find templates for creating PV's backed by glusterFS or NFS in pv-sample
 
 ### Notes about logging in to the master node
 
-1. If you are running the playbook locally but pointing at a remote master node then master_url must be set when running the playbook. 
+1. If you are running the playbook locally but pointing at a remote master node then login_url must be set when running the playbook. 
 
-2. If you are running the playbook remotely (i.e. while in an ssh session) then master_url does not need to be set as the default address for oc login is https://localhost:8443.
+2. If you are running the playbook remotely (i.e. while in an ssh session) then login_url does not need to be set as the default address for oc login is https://localhost:8443.
 
 #### Using insecure connections
 

@@ -12,7 +12,7 @@
 # We want to be able to log in as a developer, but we might also want to log in as a sys admin (we dont as of yet).
 -
   name: "Login as user using the OpenShift command line tool"
-  command: 'oc login {{ master_url | default("https://localhost:8443") }} --username={{ oc_user }} --password="{{ oc_password }}" {{ skip_tls | default("false") | bool | ternary("--insecure-skip-tls-verify"," ") }}'
+  command: 'oc login {{ login_url | default("https://localhost:8443") }} --username={{ oc_user }} --password="{{ oc_password }}" {{ skip_tls | default("false") | bool | ternary("--insecure-skip-tls-verify"," ") }}'
   register: output
 -
   debug: var=output
