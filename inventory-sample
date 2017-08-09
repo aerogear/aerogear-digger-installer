@@ -32,6 +32,12 @@ proxy_protocol=http
 # jenkins_user=
 # jenkins_pass=
 
+# Maximum amount of memory the Jenkins master container can use. Defaults to `3Gi`
+# master_memory_limit=
+
+# Volume space available for data, e.g. 512Mi, 2Gi. Defaults to `40Gi`
+# master_volume_capacity=
+
 [master]
 # Required. The ip address of the master node of the OpenShift cluster
 
