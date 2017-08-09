@@ -3,9 +3,9 @@
 - name: "Run initial minimum requirement checks"
   hosts: master
   tasks:
-    -
-      name: "Check Java is installed on path of local machine"
-      command: which java
+  remote_user: root
+  roles:
+    - {role: java, tags: install-java}
 
 - name: "Deploy Digger"
   hosts: master
