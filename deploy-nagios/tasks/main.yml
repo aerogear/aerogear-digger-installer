@@ -5,7 +5,7 @@
   include_vars: ../shared_files/{{ rhmap_version }}.yml
   when: rhmap_version is defined
 
-- 
+-
   name: "Include var file for community resources"
   include_vars: vars/buildfarm.yml
   when: rhmap_version is not defined
@@ -31,13 +31,13 @@
   set_fact:
     nagios_image_version: "{{ nagios_image_def[0][0].image }}"
 
-- 
+-
   name: "Update local nagios template with image version and tag"
   template:
     src: nagios-template.j2
     dest: "{{ buildfarm_templates_dir }}/nagios-template.json"
 
-- 
+-
   name: "Create project"
   command: "oc new-project {{ project_name }} --namespace={{ project_name }}"
   register: create_project_result
@@ -66,7 +66,7 @@
   register: nagios_role_result
   changed_when: "'nagios' not in sa_list.stdout and nagios_role_result.rc == 0"
 
-- 
+-
   name: "Create the Nagios resources"
   command: "oc new-app --namespace {{ project_name }} -f {{ buildfarm_templates_dir }}/nagios-template.json"
   register: nagios_create_result
@@ -78,8 +78,7 @@
   name: "Poll for Pods to become ready"
   command: oc get dc nagios --namespace={{ project_name }} --output jsonpath='{.status.availableReplicas}'
   register: poll_result
-  until: poll_result.stdout == "1" and poll_result.stderr == ""
-  failed_when: '"error executing jsonpath" not in poll_result.stderr and poll_result.stdout != "1" and poll_result.stdout != "0"'
+  until: poll_result.rc == 0 and poll_result.stdout | int > 0
   retries: 60
   delay: 10
   when: nagios_create_result|changed
