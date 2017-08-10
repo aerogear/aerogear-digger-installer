@@ -47,7 +47,7 @@ To run this section as a standalone step you must specify the `osx_install_homeb
 
 ## Install RVM and Ruby
 Installs RVM along with a single version of Ruby. The version of Ruby
-to install can be defined by a variable. The cocoapods gem will be installed, 
+to install can be defined by a variable. The cocoapods gem will be installed,
 other gems can be specified using the `gem_packages` variable.
 
 To run this section as a standalone step you must specify the `osx_install_ruby` tag.
@@ -128,9 +128,9 @@ You will need to create a key pair using a tool such as `ssh-keygen` to allow th
 To run this section as a standalone step you must specify the `osx_configure_buildfarm` tag.
 
 ### Options
-* `credential_private_key_path` - Location of the private key of the pair. This is stored in Jenkins and used to SSH into the macOS node. If this is not set then this section will be skipped.
-* `credential_passphrase` - Passphrase of the private key. This is stored in Jenkins and used to SSH into the macOS node. If this is not set then this section will be skipped.
-* `credential_public_key_path` - Location of the public key of the pair. If this is not set then this section will be skipped.
+* `credential_private_key` - Private key stored in Jenkins and used to SSH into the macOS node. If this is not set then a key pair will be generated.
+* `credential_public_key` - Public key of the pair. If this is not set then a key pair will be generated.
+* `credential_passphrase` - Passphrase of the private key. This is stored in Jenkins and used to SSH into the macOS node. If this is not set the private key will not be password protected.
 * `buildfarm_node_port` - The port to connect to the macOS node on. Defaults to `22`.
 * `buildfarm_node_root_dir` - Root node of the node in Jenkins. Defaults to `/Users/jenkins`.
 * `buildfarm_credential_id` - Identifier for the Jenkins credential object. Defaults to `macOS_buildfarm_cred`.
@@ -186,5 +186,5 @@ Authenticated proxies are not supported (yet), you will need to manually apply t
 
 
 ```
-networksetup -setwebproxy Ethernet $PROXY_HOST $PROXY_PORT on $PROXY_USER $PROXY_PASS 
+networksetup -setwebproxy Ethernet $PROXY_HOST $PROXY_PORT on $PROXY_USER $PROXY_PASS
 ```
