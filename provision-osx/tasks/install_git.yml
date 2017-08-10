@@ -1,0 +1,39 @@
+---
+
+-
+  name: Check if git is installed
+  command: git --version
+  failed_when: no
+  register: git_installed
+
+-
+  name: Download git package
+  get_url:
+    url: "{{git_install_url}}"
+    dest: "{{remote_tmp_dir}}/{{git_install_dmg_name}}"
+  when: git_installed.rc != 0
+  environment:
+    http_proxy: "{{ proxy_url | default('') }}"
+    https_proxy: "{{ proxy_url | default('') }}"
+
+-
+  name: Attach git installation dmg
+  command: "hdiutil attach {{remote_tmp_dir}}/{{git_install_dmg_name}} -mountpoint {{remote_tmp_dir}}/{{git_install_volume_name}}"
+  when: git_installed.rc != 0
+
+-
+  name: Install git package
+  command: "installer -package {{remote_tmp_dir}}/{{git_install_volume_name}}/{{git_install_pkg_name}} -target /"
+  become: yes
+  when: git_installed.rc != 0
+
+-
+  name : Detach git installation dmg
+  command: hdiutil detach {{remote_tmp_dir}}/{{git_install_volume_name}}/
+  when: git_installed.rc != 0
+
+-
+  name: Check that git was installed correctly
+  command: git --version
+  when: git_installed.rc != 0
+
