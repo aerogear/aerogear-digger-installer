@@ -17,9 +17,3 @@
   lineinfile:
     dest: ~/.bash_profile
     line: "export LANG={{ buildfarm_lang_env_var }}"
-
--
-  name: Configure profile file
-  lineinfile:
-    dest: ~/.profile
-    line: "source ~/.bash_profile"
