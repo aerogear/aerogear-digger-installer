@@ -30,6 +30,7 @@
   shell: "gem list -i '^domain_name$'"
   args:
     executable: /bin/bash
+  changed_when: False
   register: ruby_domain_name_installed
 
 -
