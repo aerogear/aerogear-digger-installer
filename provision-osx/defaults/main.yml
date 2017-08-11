@@ -4,7 +4,7 @@
 
 remote_tmp_dir: /tmp
 
-git_install_url: https://netix.dl.sourceforge.net/project/git-osx-installer/git-2.13.1-intel-universal-mavericks.dmg
+git_install_url: https://sourceforge.net/projects/git-osx-installer/files/git-2.13.1-intel-universal-mavericks.dmg/download?use_mirror=autoselect
 git_install_dmg_name: git-2.13.1-intel-universal-mavericks.dmg
 git_install_volume_name: git-installer-volume
 git_install_pkg_name: git-2.13.1-intel-universal-mavericks.pkg
