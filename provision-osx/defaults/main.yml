@@ -58,7 +58,7 @@ buildfarm_credential_id: macOS_buildfarm_cred
 
 buildfarm_credential_description: Shared credential for the macOS nodes in the buildfarm
 
-buildfarm_node_name: "macOS ({{ ansible_host }})"
+buildfarm_node_name: "macOS"
 
 buildfarm_node_labels:
 - ios

@@ -82,6 +82,7 @@
     register: update_credential
     when: create_credential.rc != 0 and create_credential.stderr.find('No change') >= 0
   run_once: true
+  delegate_to: "{{ groups['master'][0] }}"
 
 -
   name: Add public key to authorized key file
@@ -91,11 +92,17 @@
     key: "{{ credential_public_key }}"
 
 -
+  set_fact: 
+    mac_host: "{{ansible_host}}"
+
+-
   name: Create node config from template
   template:
     src: create-node.xml.j2
     dest: "/tmp/create-node.xml"
     force: yes
+  delegate_to: "{{ groups['master'][0] }}"
+
 -
   name: Create node
   shell: cat /tmp/create-node.xml | java -jar /tmp/jenkins-cli.jar -remoting -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }} create-node
@@ -104,11 +111,13 @@
   register: create_node
   failed_when: create_node.rc != 0 and create_node.stderr.find('already exists') == -1
   changed_when: create_node.rc == 0
+  delegate_to: "{{ groups['master'][0] }}"
 
 -
   name: Update node
-  shell: "cat /tmp/create-node.xml | java -jar /tmp/jenkins-cli.jar -remoting -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }} update-node '{{ buildfarm_node_name }}'"
+  shell: "cat /tmp/create-node.xml | java -jar /tmp/jenkins-cli.jar -remoting -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }} update-node '{{ buildfarm_node_name }} ({{mac_host}})'"
   args:
     executable: /bin/bash
   register: create_node
   when: create_node.rc != 0 and create_node.stderr.find('already exists') >= 0
+  delegate_to: "{{ groups['master'][0] }}"
