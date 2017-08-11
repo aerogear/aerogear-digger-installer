@@ -4,6 +4,9 @@
 
 remote_tmp_dir: /tmp
 
+ruby_domain_name_file_path: ruby_domain_name/domain_name-0.5.99999999.gem
+ruby_domain_name_gem_name: domain_name-0.5.99999999.gem
+
 nvm_install_url: https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh
 nvm_install_file_name: install-nvm.sh
 
@@ -18,9 +21,11 @@ ruby_version: ruby-2.3.3-latest
 node_versions:
 - 6
 
+xcode_install_version: "2.2.0"
+
 gem_packages:
 - name: xcode-install
-  version: "2.2.0"
+  version: "{{xcode_install_version}}"
 cocoapods_version: "1.1.1"
 
 # Global only

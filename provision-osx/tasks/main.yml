@@ -3,6 +3,9 @@
 - include: configure_base_system.yml
   tags: osx_base_system
 
+- include: install_xcode.yml
+  tags: osx_install_xcode
+
 - include: install_homebrew.yml
   tags: osx_install_homebrew
   
@@ -11,9 +14,6 @@
 
 - include: install_nodejs.yml
   tags: osx_install_nodejs
-
-- include: install_xcode.yml
-  tags: osx_install_xcode
 
 - include: download_certs.yml
   tags: osx_download_certs
