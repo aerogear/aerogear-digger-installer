@@ -4,6 +4,11 @@
 
 remote_tmp_dir: /tmp
 
+git_install_url: https://sourceforge.net/projects/git-osx-installer/files/git-2.13.1-intel-universal-mavericks.dmg/download?use_mirror=autoselect
+git_install_dmg_name: git-2.13.1-intel-universal-mavericks.dmg
+git_install_volume_name: git-installer-volume
+git_install_pkg_name: git-2.13.1-intel-universal-mavericks.pkg
+
 nvm_install_url: https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh
 nvm_install_file_name: install-nvm.sh
 
@@ -32,7 +37,7 @@ homebrew_packages:
 - name: gpg
 - name: grep
 - name: jq
-  
+
 homebrew_repo: https://github.com/Homebrew/brew
 homebrew_version: "1.2.3"
 

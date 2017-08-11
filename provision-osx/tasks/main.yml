@@ -3,9 +3,12 @@
 - include: configure_base_system.yml
   tags: osx_base_system
 
+- include: install_git.yml
+  tags: osx_install_git
+
 - include: install_homebrew.yml
   tags: osx_install_homebrew
-  
+
 - include: install_ruby.yml
   tags: osx_install_ruby
 
