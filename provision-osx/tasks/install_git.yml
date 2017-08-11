@@ -4,6 +4,7 @@
   name: Check if git is installed
   command: git --version
   failed_when: no
+  changed_when: False
   register: git_installed
 
 -
