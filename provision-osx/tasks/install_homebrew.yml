@@ -28,7 +28,6 @@
     dest: "{{ homebrew_install_path }}"
     update: no
     accept_hostkey: yes
-    depth: 1
   environment:
     http_proxy: "{{ proxy_url | default('') }}"
     https_proxy: "{{ proxy_url | default('') }}"
