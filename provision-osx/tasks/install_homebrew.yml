@@ -11,14 +11,15 @@
   become: yes
 
 - 
-  name: Check homebrew directory exists
+  name: Check homebrew directories permissions
   file:
-    path: "{{ homebrew_install_path }}"
+    path: "{{ item }}"
     owner: "{{ ansible_ssh_user }}"
     group: admin
     state: directory
     mode: 0775
   become: yes
+  with_items: "{{ homebrew_paths }}"
 
 - 
   name: Install homebrew
@@ -31,26 +32,6 @@
   environment:
     http_proxy: "{{ proxy_url | default('') }}"
     https_proxy: "{{ proxy_url | default('') }}"
-
-- 
-  name: Check permissions on homebrew_brew_bin_path
-  file:
-    path: "{{ homebrew_brew_bin_path }}"
-    state: directory
-    owner: "{{ ansible_ssh_user }}"
-    group: admin
-    mode: 0775
-  become: yes
-
-- 
-  name: Check permissions on homebrew_install_path
-  file:
-    path: "{{ homebrew_install_path }}"
-    state: directory
-    owner: "{{ ansible_ssh_user }}"
-    group: admin
-    recurse: true
-  become: yes
 
 - 
   name: Check if homebrew binary is already in place.
