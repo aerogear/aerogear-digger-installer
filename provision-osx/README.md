@@ -12,7 +12,7 @@ Provision Jenkins node for the build farm. This role performs a few tasks, these
 * [Confifure Proxy](#configure-proxy)
 
 ## Prerequisites
-* SSH access as a user with sudo permissions.
+* SSH access as a user with sudo permissions. A password can be provided if required with the `ansible_become_pass` variable.
 * `ansible_sudo_pass` variable set when running the job.
 * `xcode_install_user` variable set when running the job, otherwise Xcode tasks will be skipped.
 * `xcode_install_password` variable set when running the job, otherwise Xcode tasks will be skipped.
