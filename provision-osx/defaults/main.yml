@@ -39,11 +39,22 @@ homebrew_packages:
 - name: jq
   
 homebrew_repo: https://github.com/Homebrew/brew
-homebrew_version: "1.2.3"
+homebrew_version: "1.3.1"
 
 homebrew_prefix: /usr/local
 homebrew_install_path: "{{ homebrew_prefix }}/Homebrew"
 homebrew_brew_bin_path: /usr/local/bin
+homebrew_var_path: /usr/local/var/homebrew
+
+homebrew_paths:
+- "{{ homebrew_install_path }}"
+- "{{ homebrew_brew_bin_path }}"
+- "{{ homebrew_var_path }}"
+- "/usr/local/Cellar"
+- "/usr/local/opt"
+- "/usr/local/share"
+- "/usr/local/etc"
+- "/usr/local/include"
 
 homebrew_taps:
 - homebrew/core
