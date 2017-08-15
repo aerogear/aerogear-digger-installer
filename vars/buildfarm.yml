@@ -14,7 +14,7 @@ deployments:
   - name: "android-slave"
     containers:
     - name: "android-slave"
-      image: "docker.io/aerogear/jenkins-android-slave:dev"
+      image: "docker.io/aerogear/digger-android-slave-image:latest"
   - name: "android-sdk"
     containers:
     - name: "android-sdk"
