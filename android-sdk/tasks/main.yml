@@ -173,7 +173,7 @@
 
 -
   name: "Check gradle wrapper exists"
-  command: oc exec --namespace={{ project_name }} {{ android_sdk_podname }} -i -- bash -c 'stat {{ android_sdk_home }}/tools/templates/gradle/wrapper/gradle-wrapper.tar.gz'
+  command: oc exec --namespace={{ project_name }} {{ android_sdk_podname }} -i -- bash -c 'stat {{ android_sdk_home }}/tools/templates/gradle/wrapper/gradlew'
   register: gradlew_status
   failed_when: False
   changed_when: False
