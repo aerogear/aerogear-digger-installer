@@ -123,9 +123,18 @@
   name: "Set permission on the file"
   shell: "oc exec -i {{ android_sdk_podname }} --namespace={{ project_name }} -- bash -c 'chmod 775 /opt/tools/{{ config_file }}'"
 
+- 
+  name: "Checks if android sdk folder already exists"
+  stat:
+    path: "{{ android_sdk_home }}"
+  register: sdk_folder
+  tags:
+    - install-sdk
+
 -
   name: "Install the Android SDK"
   command: "oc rsh --namespace={{ project_name }} {{ android_sdk_podname }} androidctl sdk install"
+  when: sdk_folder.stat.exists == False 
   tags:
     - install-sdk
 
@@ -133,7 +142,7 @@
 
 -
   name: "Sync Android Platform Versions via config"
-  command: "oc rsh --namespace={{ project_name }} {{ android_sdk_podname }} androidctl sync /opt/tools/{{ config_file }}"
+  command: "oc rsh --namespace={{ project_name }} {{ android_sdk_podname }} androidctl-sync /opt/tools/{{ config_file }}"
   register: rsh_cmd
   failed_when: "'Traceback' in rsh_cmd.stdout or 'Common Arguments' in rsh_cmd.stdout"
   tags:
@@ -152,7 +161,7 @@
     - install-sdk
 
 - name: "Licence accepted. Installing SDK ** Note ** This task may take some time, please be patient"
-  command: "oc rsh --namespace={{ project_name }} {{ android_sdk_podname }} androidctl -y sync /opt/tools/{{ config_file }}"
+  command: "oc rsh --namespace={{ project_name }} {{ android_sdk_podname }} androidctl-sync -y /opt/tools/{{ config_file }}"
   when: "'Accept?' in rsh_cmd.stdout"
   tags:
     - install-sdk
