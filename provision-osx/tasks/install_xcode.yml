@@ -1,31 +1,6 @@
 ---
 
 -
-  name: Get current user groups
-  shell: groups
-  args:
-    executable: /bin/bash
-  changed_when: False
-  register: user_groups
-
--
-  name: Ensure passwordless sudo for user
-  become: yes
-  replace:
-    dest: /etc/sudoers
-    regexp: '^# %wheel ALL=\(ALL\) NOPASSWD: ALL'
-    replace: '%wheel ALL=(ALL) NOPASSWD: ALL'
-    validate: visudo -cf %s
-
--
-  name: Add sudoers users to wheel group
-  become: yes
-  user:
-    name: "{{ ansible_ssh_user }}"
-    groups: wheel
-    append: yes
-
--
   name: Check if ruby_domain_name gem is already installed
   shell: "gem list -i '^domain_name$'"
   args:
@@ -90,20 +65,3 @@
   environment:
     XCODE_INSTALL_USER: "{{ xcode_install_user }}"
     XCODE_INSTALL_PASSWORD: "{{ xcode_install_password }}"
-
--
-  name: Remove passwordless sudo for user
-  become: yes
-  replace:
-    dest: /etc/sudoers
-    regexp: '^%wheel ALL=\(ALL\) NOPASSWD: ALL'
-    replace: '# %wheel ALL=(ALL) NOPASSWD: ALL'
-    validate: visudo -cf %s
-
--
-  name: Restore user groups
-  become: yes
-  user:
-    name: "{{ ansible_ssh_user }}"
-    groups: "{{ user_groups.stdout.split(' ') | join(',') }}"
-    append: no
