@@ -173,7 +173,7 @@
 
 -
   name: "Check gradle wrapper exists"
-  command: oc exec --namespace={{ project_name }} {{ android_sdk_podname }} -i -- bash -c 'stat $ANDROID_HOME/tools/templates/gradle/wrapper/gradle-wrapper.tar.gz'
+  command: oc exec --namespace={{ project_name }} {{ android_sdk_podname }} -i -- bash -c 'stat {{ android_sdk_home }}/tools/templates/gradle/wrapper/gradle-wrapper.tar.gz'
   register: gradlew_status
   failed_when: False
   changed_when: False
@@ -184,7 +184,7 @@
   block:
   -
     name: "Create required directory"
-    command: oc exec --namespace={{ project_name }} {{ android_sdk_podname }} -i -- bash -c 'mkdir -p $ANDROID_HOME/tools/templates/gradle/wrapper'
+    command: oc exec --namespace={{ project_name }} {{ android_sdk_podname }} -i -- bash -c 'mkdir -p {{ android_sdk_home }}/tools/templates/gradle/wrapper'
 
   -
     name: "Create temp folder"
@@ -202,11 +202,11 @@
 
   -
     name: "Copy required tarball"
-    command: oc rsync --namespace={{ project_name }} /tmp/digger-installer/ {{ android_sdk_podname }}:/opt/android-sdk-linux/tools/templates/gradle/wrapper/ --include='gradle-wrapper.tar.gz'
+    command: oc rsync --namespace={{ project_name }} /tmp/digger-installer/ {{ android_sdk_podname }}:{{ android_sdk_home }}/tools/templates/gradle/wrapper/ --include='gradle-wrapper.tar.gz'
 
   -
     name: "Unarchive gradle files"
-    command: oc exec --namespace={{ project_name }} {{ android_sdk_podname }} -i -- bash -c 'tar -zxvf $ANDROID_HOME/tools/templates/gradle/wrapper/gradle-wrapper.tar.gz -C $ANDROID_HOME/tools/templates/gradle/wrapper'
+    command: oc exec --namespace={{ project_name }} {{ android_sdk_podname }} -i -- bash -c 'tar -zxvf {{ android_sdk_home }}/tools/templates/gradle/wrapper/gradle-wrapper.tar.gz -C {{ android_sdk_home }}/tools/templates/gradle/wrapper'
   when: gradlew_status.rc != 0
   tags:
     - install-sdk
