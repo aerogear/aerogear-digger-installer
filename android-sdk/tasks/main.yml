@@ -75,6 +75,7 @@
   shell: "oc get pods --namespace={{ project_name }} | grep android-sdk | grep -v deploy | awk '{print$1}'"
   failed_when: output.stdout == ""
   register: output
+  changed_when: False
   tags:
     - install-sdk
 
@@ -84,7 +85,6 @@
     android_sdk_podname: "{{ output.stdout }}"
   tags:
     - install-sdk
-
 -
   name: "Set random filename"
   set_fact:
@@ -119,11 +119,16 @@
 -
   name: "Copy the Android SDK config file to the container"
   shell: "oc exec -i {{ android_sdk_podname }} --namespace={{ project_name }} -- bash -c 'cat > /opt/tools/{{ config_file }}' < /tmp/{{ config_file }}"
+  tags:
+    - install-sdk
+
 -
   name: "Set permission on the file"
   shell: "oc exec -i {{ android_sdk_podname }} --namespace={{ project_name }} -- bash -c 'chmod 775 /opt/tools/{{ config_file }}'"
+  tags:
+    - install-sdk
 
-- 
+-
   name: "Checks if android sdk folder already exists"
   stat:
     path: "{{ android_sdk_home }}"
@@ -134,7 +139,7 @@
 -
   name: "Install the Android SDK"
   command: "oc rsh --namespace={{ project_name }} {{ android_sdk_podname }} androidctl sdk install"
-  when: sdk_folder.stat.exists == False 
+  when: sdk_folder.stat.exists == False
   tags:
     - install-sdk
 
@@ -163,5 +168,45 @@
 - name: "Licence accepted. Installing SDK ** Note ** This task may take some time, please be patient"
   command: "oc rsh --namespace={{ project_name }} {{ android_sdk_podname }} androidctl-sync -y /opt/tools/{{ config_file }}"
   when: "'Accept?' in rsh_cmd.stdout"
+  tags:
+    - install-sdk
+
+-
+  name: "Check gradle wrapper exists"
+  command: oc exec --namespace={{ project_name }} {{ android_sdk_podname }} -i -- bash -c 'stat $ANDROID_HOME/tools/templates/gradle/wrapper/gradle-wrapper.tar.gz'
+  register: gradlew_status
+  failed_when: False
+  changed_when: False
+  tags:
+    - install-sdk
+
+-
+  block:
+  -
+    name: "Create required directory"
+    command: oc exec --namespace={{ project_name }} {{ android_sdk_podname }} -i -- bash -c 'mkdir -p $ANDROID_HOME/tools/templates/gradle/wrapper'
+
+  -
+    name: "Create temp folder"
+    file:
+      path: /tmp/digger-installer
+      state: directory
+      mode: 0777
+
+  -
+    name: "Copy gradlew to remote temp folder"
+    copy:
+      src: gradle-wrapper.tar.gz
+      dest: /tmp/digger-installer/gradle-wrapper.tar.gz
+      mode: 0777
+
+  -
+    name: "Copy required tarball"
+    command: oc rsync --namespace={{ project_name }} /tmp/digger-installer/ {{ android_sdk_podname }}:/opt/android-sdk-linux/tools/templates/gradle/wrapper/ --include='gradle-wrapper.tar.gz'
+
+  -
+    name: "Unarchive gradle files"
+    command: oc exec --namespace={{ project_name }} {{ android_sdk_podname }} -i -- bash -c 'tar -zxvf $ANDROID_HOME/tools/templates/gradle/wrapper/gradle-wrapper.tar.gz -C $ANDROID_HOME/tools/templates/gradle/wrapper'
+  when: gradlew_status.rc != 0
   tags:
     - install-sdk
