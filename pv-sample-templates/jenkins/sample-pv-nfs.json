@@ -6,7 +6,7 @@
   },
   "spec": {
     "capacity": {
-      "storage": "10Gi"
+      "storage": "40Gi"
     },
     "accessModes": [
       "ReadWriteOnce"
