@@ -11,9 +11,9 @@
   hosts: master
   remote_user: root
   roles:
-    - {role: deploy-jenkins, tags: deploy-jenkins }
-    - {role: android-sdk,  tags: android-sdk}
-    - {role: configure-buildfarm, tags: configure-buildfarm}
+    - {role: deploy-jenkins, tags: deploy, deploy-jenkins }
+    - {role: android-sdk,  tags: deploy, android-sdk}
+    - {role: configure-buildfarm, tags: deploy, configure-buildfarm}
   vars_files:
     - "vars/buildfarm.yml"
 
@@ -29,7 +29,7 @@
   hosts: master
   remote_user: root
   roles:
-    - {role: deploy-nagios, tags: deploy-nagios}
+    - {role: deploy-nagios, tags: deploy, deploy-nagios}
   vars_files:
     - "vars/buildfarm.yml"
 
