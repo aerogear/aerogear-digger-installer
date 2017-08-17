@@ -51,13 +51,13 @@ You can find templates for creating PV's backed by glusterFS or NFS in pv-sample
 
 ### Notes about logging in to the master node
 
-1. If you are running the playbook locally but pointing at a remote master node then login_url must be set when running the playbook. 
+1. If you are running the playbook locally but pointing at a remote master node then login_url must be set when running the playbook.
 
 2. If you are running the playbook remotely (i.e. while in an ssh session) then login_url does not need to be set as the default address for oc login is https://localhost:8443.
 
 #### Using insecure connections
 
-If you wish to use an insecure connection you can pass the skip_tls environment variable which will bypass the certificate check when logging in to openshift. 
+If you wish to use an insecure connection you can pass the skip_tls environment variable which will bypass the certificate check when logging in to openshift.
 
 To pass it with the ansible-playbook, it should look like:
 
@@ -69,7 +69,7 @@ To pass it with the ansible-playbook, it should look like:
 
 #### Example command line to execute aerogear-digger ansible install
 ```
-ansible-playbook -i <your-inventories-file> sample-build-playbook.yml 
+ansible-playbook -i <your-inventories-file> sample-build-playbook.yml
 ```
 
 The playbook executes the following steps for you:
@@ -82,6 +82,28 @@ The playbook executes the following steps for you:
 - Installs Nagios and triggers checkes
 
 See the image below for an overview of the playbook and roles
+
+
+## Running Digger on OpenShift dedicated
+
+### Prerequisites:
+
+* Persistent volumes x 3 - Default sizes 40Gib, 10Gib, 1GiB
+* OpenShift command line client installed locally
+* Java installed locally
+* An existing SSH Key Pair locally. Public key will need to be uploaded to the Jenkins server
+* SSH access to a macOS server outside the OpenShift cluster if required
+* Set all host groups variables except for `macos` to `ansible_connection=local`
+
+A subset of the roles in this repository should be run using the `deploy` tag in `sample-build-playbook.yml`
+
+Execute the following:
+
+`ansible-playbook -i <your-inventories-file> sample-build-playbook.yml --tags=deploy,provision-osx`
+
+If you do not have an external macOS node setup, run the following:
+
+`ansible-playbook -i <your-inventories-file> sample-build-playbook.yml --tags=deploy`
 
 
 <img align="left" src="images/architecture.png">

@@ -101,8 +101,6 @@
   shell: echo {{ item }}
   register: nagios_dashboard
   with_items: "{{ nagios_result.stdout_lines }}"
-  when:
-    - (mongo_replicas is defined and mongo_replicas == 3) or (role is defined and role == "core") or (role is defined and role == "dedicated")
   failed_when:
     - "'critical' in nagios_dashboard.stdout or 'warning' in nagios_dashboard.stdout or 'unknown' in nagios_dashboard.stdout "
   changed_when: False
