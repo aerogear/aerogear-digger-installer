@@ -34,7 +34,7 @@
             <string>PATH</string>
             <string>{{ buildfarm_env_path.stdout }}</string>
             <string>LANG</string>
-            <string>{{ buildfarm_env_lang }}</string>
+            <string>{{ buildfarm_env_lang.stdout }}</string>
             {% if proxy_url is defined and proxy_url != '' %}
             <string>HTTP_PROXY</string>
             <string>{{ proxy_url }}</string>
