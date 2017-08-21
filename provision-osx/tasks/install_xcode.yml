@@ -6,6 +6,7 @@
   args:
     executable: /bin/bash
   changed_when: False
+  failed_when: ruby_domain_name_installed.stderr and 'command not found' in ruby_domain_name_installed.stderr
   register: ruby_domain_name_installed
 
 -
