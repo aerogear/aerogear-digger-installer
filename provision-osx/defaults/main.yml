@@ -95,3 +95,4 @@ proxy_ctx:
   - securewebproxy
 
 buildfarm_lang_env_var: "en_US.UTF-8"
+buildfarm_path_env_var: "$PATH:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"

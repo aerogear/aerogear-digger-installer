@@ -11,6 +11,11 @@
     path: ~/.bash_profile
     state: touch
   when: bash_file.stat.exists == False
+-
+  name: Configure bash profile PATH variable
+  lineinfile:
+    dest: ~/.bash_profile
+    line: "export PATH={{ buildfarm_path_env_var }}"
 
 -
   name: Configure bash profile language encoding
