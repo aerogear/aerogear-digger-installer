@@ -52,10 +52,16 @@
 - debug:
     msg: "Installing Xcode ({{ xcode_versions | join(', ') }}). This may take over 30 minutes for each version. Please be patient."
 
+-
+  name: Get xcversion binary path
+  shell: source ~/.bash_profile && which xcversion
+  register: xcversion_bin
+  failed_when: xcversion_bin.rc != 0
+
 # Check here for versions already installed
 -
   name: Install xcode versions
-  shell: "source ~/.bash_profile && xcversion install {{ item }}"
+  shell: "{{ xcversion_bin.stdout }} install {{ item }}"
   args:
     executable: /bin/bash
   with_items: "{{ xcode_versions }}"
@@ -63,6 +69,7 @@
   register: xcode_install
   failed_when: xcode_cli_tools_install.rc != 0 and xcode_cli_tools_install.stdout.find('already installed') == -1
   changed_when: xcode_cli_tools_install.stdout.find('already installed') == -1
+  become: true
   environment:
     XCODE_INSTALL_USER: "{{ xcode_install_user }}"
     XCODE_INSTALL_PASSWORD: "{{ xcode_install_password }}"
