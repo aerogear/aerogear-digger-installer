@@ -1,68 +1,12 @@
 ---
 
 -
-  name: Copy prerequisite gpg key
-  get_url:
-    url: "{{rvm_gpg_url}}"
-    dest: "{{remote_tmp_dir}}/{{rvm_gpg_file_name}}"
-  environment:
-    http_proxy: "{{ proxy_url | default('') }}"
-    https_proxy: "{{ proxy_url | default('') }}"
-
--
-  name: Install rvm prerequisites
-  shell: "/usr/local/bin/gpg --import {{remote_tmp_dir}}/{{rvm_gpg_file_name}}"
-  args:
-    executable: /bin/bash
-  register: list
-
--
-  name: Retrieve rvm install script
-  get_url:
-    url: "{{rvm_install_url}}"
-    dest: "{{remote_tmp_dir}}/{{rvm_install_file_name}}"
-  register: rvm_prerequisites
-  environment:
-    http_proxy: "{{ proxy_url | default('') }}"
-    https_proxy: "{{ proxy_url | default('') }}"
-
--
-  name: Install rvm
-  shell: "bash {{remote_tmp_dir}}/{{rvm_install_file_name}} stable"
-  environment:
-    http_proxy: "{{ proxy_url | default('') }}"
-    https_proxy: "{{ proxy_url | default('') }}"
-
--
-  name: Install ruby
-  shell: "source ~/.bash_profile && rvm install {{ ruby_version }}"
-  args:
-    executable: /bin/bash
-  environment:
-    http_proxy: "{{ proxy_url | default('') }}"
-    https_proxy: "{{ proxy_url | default('') }}"
-
--
-  name: Use ruby version
-  shell: "source ~/.bash_profile && rvm alias create default {{ ruby_version }}"
-  args:
-    executable: /bin/bash
-
--
-  name: Install cocoapods
-  shell: source ~/.bash_profile && gem install -n /usr/local/bin -v {{ cocoapods_version | default('\"\"') }} cocoapods --no-ri --no-rdoc
-  args:
-    executable: /bin/bash
-  environment:
-    http_proxy: "{{ proxy_url | default('') }}"
-    https_proxy: "{{ proxy_url | default('') }}"
-
--
   name: Install gem packages
-  shell: "source ~/.bash_profile && gem install --no-ri --no-rdoc {{item.name}} -v {{ item.version | default('\"\"') }}"
+  shell: "gem install --no-ri --no-rdoc {{item.name}} -v {{ item.version | default('\"\"') }}"
   args:
     executable: /bin/bash
   with_items: "{{ gem_packages }}"
   environment:
     http_proxy: "{{ proxy_url | default('') }}"
     https_proxy: "{{ proxy_url | default('') }}"
+  become: yes

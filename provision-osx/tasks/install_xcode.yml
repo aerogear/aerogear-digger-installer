@@ -36,10 +36,17 @@
     https_proxy: "{{ proxy_url | default('') }}"
 
 -
+  name: Get xcversion binary path
+  shell: source ~/.bash_profile && which xcversion
+  register: xcversion_bin
+  failed_when: xcversion_bin.rc != 0
+
+-
   name: Install command line tools
-  shell: source ~/.bash_profile && xcversion install-cli-tools
+  shell: "{{ xcversion_bin.stdout }} install-cli-tools"
   args:
     executable: /bin/bash
+  become: yes
   register: xcode_cli_tools_install
   when: xcode_install_user is defined and xcode_install_password is defined
   failed_when: xcode_cli_tools_install.rc != 0 and xcode_cli_tools_install.stdout.find('already installed') == -1
@@ -52,12 +59,6 @@
 - debug:
     msg: "Installing Xcode ({{ xcode_versions | join(', ') }}). This may take over 30 minutes for each version. Please be patient."
 
--
-  name: Get xcversion binary path
-  shell: source ~/.bash_profile && which xcversion
-  register: xcversion_bin
-  failed_when: xcversion_bin.rc != 0
-
 # Check here for versions already installed
 -
   name: Install xcode versions
@@ -69,7 +70,7 @@
   register: xcode_install
   failed_when: xcode_cli_tools_install.rc != 0 and xcode_cli_tools_install.stdout.find('already installed') == -1
   changed_when: xcode_cli_tools_install.stdout.find('already installed') == -1
-  become: true
+  become: yes
   environment:
     XCODE_INSTALL_USER: "{{ xcode_install_user }}"
     XCODE_INSTALL_PASSWORD: "{{ xcode_install_password }}"

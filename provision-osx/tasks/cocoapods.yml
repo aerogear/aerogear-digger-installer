@@ -1,6 +1,16 @@
 - include: configure_node_env_vars.yml
 
 -
+  name: Install cocoapods
+  shell: gem install -n /usr/local/bin -v {{ cocoapods_version | default('\"\"') }} cocoapods --no-ri --no-rdoc
+  args:
+    executable: /bin/bash
+  environment:
+    http_proxy: "{{ proxy_url | default('') }}"
+    https_proxy: "{{ proxy_url | default('') }}"
+  become: yes
+
+-
   name: Update Cocoapods
   shell: bash -lc "pod repo update"
   register: pod_repo_update

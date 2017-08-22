@@ -18,8 +18,8 @@
 - include: download_certs.yml
   tags: osx_download_certs
 
-- include: pod_repo_update.yml
-  tags: osx_pod_repo_update
+- include: cocoapods.yml
+  tags: osx_cocoapods
 
 - include: configure_buildfarm_node.yml
   tags: osx_configure_buildfarm
