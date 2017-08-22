@@ -74,3 +74,28 @@
   environment:
     XCODE_INSTALL_USER: "{{ xcode_install_user }}"
     XCODE_INSTALL_PASSWORD: "{{ xcode_install_password }}"
+
+-
+  name: Check xcode output
+  debug: msg="Checking {{ item.cmd }} output"
+  with_items: "{{ xcode_install.results }}"
+  failed_when: item.stderr.find('The specified Apple developer account credentials are incorrect.') != -1
+
+-
+  name: Check xcode symlink
+  stat:
+    path: /Applications/Xcode.app
+  register: xcode_symlink
+
+-
+  name: Set default xcode symlink path
+  set_fact:
+    xcode_symlink_path: "/Applications/Xcode-{{ xcode_default_version }}.app"
+
+-
+  name: Set default xcode symlink
+  file:
+    state: link
+    src: "/Applications/Xcode-{{ xcode_default_version }}.app"
+    dest: /Applications/Xcode.app
+  when: xcode_symlink.stat.exists == False or xcode_symlink.stat.lnk_source != xcode_symlink_path
