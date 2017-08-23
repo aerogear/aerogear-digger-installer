@@ -84,6 +84,74 @@ The playbook executes the following steps for you:
 See the image below for an overview of the playbook and roles
 
 
+### Variables
+
+Please note that the variables listed here are not all variables.
+These are the ones that a typical user might want to modify. Check the `defaults/main.yml` files in each role
+to see more internal variables.  
+
+##### Common
+
+|  Variable                     | Description                                                            | Default value      |
+| ----------------------------- | ---------------------------------------------------------------------- | ------------------ |
+| `buildfarm_templates_dir`     | Where to copy the OpenShift templates in Ansible remote                | /tmp               |
+| `project_name`                | Project name in OpenShift to create Jenkins application                | aerogear-digger    |
+| `jenkins_route_protocol`      | Protocol of Jenkins server connection                                  | https              |
+| `concurrent_android_builds`   | Number of max number of concurrent Android builds that are allowed     | 5                  |
+| `deployments`                 | Image definitions for Android slave containers                         |                    |
+| `master_url`                  | OpenShift master URL. Mandatory when using ansible_connection=local    | localhost:8443     |
+| `oc_user`                     | OpenShift user.                                                        |                    |                  
+| `oc_password`                 | OpenShift user password.                                               |                    |                  
+| `jenkins_user`                | Jenkins admin username                                                 | admin              |
+| `jenkins_pass`                | Jenkins admin password                                                 | password           |
+| `master_memory_limit`         | Maximum amount of memory the Jenkins master container can use          | 3Gi                |
+| `master_volume_capacity`      | Volume space available for data                                        | 40Gi               |
+
+
+##### Proxy related
+
+If connections need to go over a proxy in the containers, fill these variables.
+
+|  Variable                     | Description                                                           |
+| ----------------------------- | --------------------------------------------------------------------- |
+| `proxy_host`                  | Proxy hostname                                                        |
+| `proxy_port`                  | Proxy port                                                            |
+| `proxy_user`                  | Proxy username                                                        |
+| `proxy_pass`                  | Proxy password                                                        |
+| `proxy_protocol`              | Proxy protocol                                                        |
+                                                                                                        
+##### IOS/OSX related
+
+These are OSX related variables. Feel free to keep them blank if you are not planning
+to build IOS applications.
+
+|  Variable                     | Description                                                                      |          |
+| ----------------------------- | -------------------------------------------------------------------------------- | -------- |
+| `macos_user`                  | Which OS user to use to connect to OSX machines                                  | jenkins  |
+| `ansible_become_pass`         | Password required to do sudo for the SSH user on OSX machines                    |          |
+| `xcode_install_user`          | OSX user to install Xcode. If empty, Xcode won't be installed                    |          |
+| `xcode_install_password`      | Password of OSX user to install Xcode                                            |          |
+| `credential_private_key_path` | Path to the private key that Jenkins should use to SSH into the macOS node       |          |
+| `credential_passphrase`       | Passphrase for the private key above                                             |          |
+| `credential_public_key_path`  | Public key of the private key above. To be added to Jenkins' authorized keys     |          |
+                  
+
+##### Nagios related
+
+These variables are used in Nagios for alerts.
+
+|  Variable                     | Description                       |                      |  
+| ----------------------------- | --------------------------------- | -------------------- |
+| `smtp_server`                 | SMTP server to send alert emails  | localhost            |
+| `smtp_username`               | SMTP username                     | username             | 
+| `smtp_password`               | SMTP password                     | password             |
+| `smtp_from_address`           | SMTP from address                 | admin@example.com    |
+| `rhmap_admin_email`           | Alert emails destination address  | root@localhost       |
+
+
+
+
+
 ## Running Digger on OpenShift dedicated
 
 ### Prerequisites:
