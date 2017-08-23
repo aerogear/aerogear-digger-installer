@@ -151,7 +151,7 @@ To run this section as a standalone step you must specify the `osx_configure_bui
 
 ## Configure Proxy
 
-Configures a proxy to be used whithin the osx node.
+Configures a proxy to be used within the osx node.
 
 To run this section as a standalone step you must specify the `osx_configure_proxy` tag.
 

@@ -26,6 +26,7 @@ xcode_install_version: "2.2.0"
 gem_packages:
 - name: xcode-install
   version: "{{xcode_install_version}}"
+
 cocoapods_version: "1.1.1"
 
 # Global only
