@@ -1,5 +1,7 @@
 ---
 
+- include: configure_node_env_vars.yml
+
 -
   name: Copy nvm install script
   get_url: 
@@ -20,7 +22,7 @@
 
 -
   name: Install node versions
-  shell: "source ~/.bashrc && nvm install {{ item }}"
+  shell: "source ~/.bash_profile && nvm install {{ item }}"
   with_items: "{{ node_versions }}"
   args:
     executable: /bin/bash
@@ -36,10 +38,6 @@
     global: yes
   with_items: "{{ npm_packages }}"
   environment:
+    PATH: "{{ buildfarm_env_path.stdout }}"
     http_proxy: "{{ proxy_url | default('') }}"
     https_proxy: "{{ proxy_url | default('') }}"
-
--
-  lineinfile:
-    dest: ~/.bash_profile
-    line: source "$HOME/.bashrc"

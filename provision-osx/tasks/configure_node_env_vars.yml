@@ -12,7 +12,7 @@
 
   -
     name: Get build farm env PATH
-    shell: "echo $PATH:/usr/local/bin:/usr/local/sbin"
+    shell: "source ~/.bash_profile && echo $PATH:/usr/local/bin:/usr/local/sbin"
     register: buildfarm_env_path
     changed_when: False
 
