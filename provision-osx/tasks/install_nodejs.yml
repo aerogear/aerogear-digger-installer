@@ -1,17 +1,15 @@
 ---
 
-- include: configure_node_env_vars.yml
-
 -
   name: Copy nvm install script
-  get_url: 
+  get_url:
     url: "{{nvm_install_url}}"
     dest: "{{remote_tmp_dir}}/{{nvm_install_file_name}}"
   environment:
     http_proxy: "{{ proxy_url | default('') }}"
     https_proxy: "{{ proxy_url | default('') }}"
 
-- 
+-
   name: Install nvm
   command: "bash {{remote_tmp_dir}}/{{nvm_install_file_name}}"
   register: install_nvm
@@ -30,7 +28,10 @@
     http_proxy: "{{ proxy_url | default('') }}"
     https_proxy: "{{ proxy_url | default('') }}"
 
-- 
+
+- include: configure_node_env_vars.yml
+
+-
   name: Install npm packages
   npm:
     name: "{{ item.name }}"

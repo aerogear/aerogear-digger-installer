@@ -1,13 +1,9 @@
+---
+
   -
     name: Get build farm env BASH
     shell: "source ~/.bash_profile && echo $BASH"
     register: buildfarm_env_bash
-    changed_when: False
-
-  -
-    name: Get build farm env NVM_PREFFIX
-    shell: "source ~/.bash_profile && echo $NVM_PREFFIX"
-    register: buildfarm_env_nvm
     changed_when: False
 
   -
