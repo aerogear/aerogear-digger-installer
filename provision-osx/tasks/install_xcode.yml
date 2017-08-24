@@ -59,17 +59,15 @@
 
 -
   name: Poll long running xcode install task
-  command: "{{ xcversion_bin.stdout }} installed"
-  register: download_status
-  until: "item in download_status.stdout"
-  retries: 1000
+  async_status: jid={{ item.ansible_job_id }}
+  register: progress
+  until: progress.finished
+  retries: 45
   delay: 60
-  failed_when: False
-  with_items:
-    -  "{{ xcode_versions }}"
-  environment:
-    XCODE_INSTALL_USER: "{{ xcode_install_user }}"
-    XCODE_INSTALL_PASSWORD: "{{ xcode_install_password }}"
+  failed_when: (progress.stdout is defined and progress.stdout.find('already installed') == -1) or ( progress.stdout is defined and progress.stderr.find('The specified Apple developer account credentials are incorrect.') != -1)
+  changed_when: progress.stdout is defined and progress.stdout.find('already installed') == -1
+  with_items: "{{ xcode_install.results }}"
+  become: yes
 
 -
   name: Check xcode symlink
