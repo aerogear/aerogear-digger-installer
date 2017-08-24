@@ -1,10 +1,31 @@
 ---
 
 -
-  name: Install gem packages
-  shell: "gem install --no-ri --no-rdoc {{item.name}} -v {{ item.version | default('\"\"') }}"
+  name: Check if ruby_domain_name gem is already installed
+  shell: "gem list -i '^domain_name$'"
   args:
     executable: /bin/bash
+  changed_when: False
+  failed_when: ruby_domain_name_installed.stderr and 'command not found' in ruby_domain_name_installed.stderr
+  register: ruby_domain_name_installed
+
+-
+  name: Copy ruby_domain_name gem to remote host
+  copy:
+     src: "{{ruby_domain_name_file_path}}"
+     dest: "{{remote_tmp_dir}}/{{ruby_domain_name_gem_name}}"
+     mode: 0755
+  when: ruby_domain_name_installed.rc != 0
+
+-
+  name: Install gem packages
+  gem:
+    name: "{{ item.name }}"
+    version: "{{ item.version | default(omit)}}"
+    repository: "{{ item.repository | default(omit) }}"
+    gem_source: "{{ item.gem_source | default(omit) }}"
+    state: present
+    include_doc: no
   with_items: "{{ gem_packages }}"
   environment:
     http_proxy: "{{ proxy_url | default('') }}"
