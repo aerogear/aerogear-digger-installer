@@ -52,6 +52,16 @@
   failed_when: xcode_cli_tools_install.rc != 0 and xcode_cli_tools_install.stdout.find('already installed') == -1
   changed_when: xcode_cli_tools_install.stdout.find('already installed') == -1
 
+-
+  name: Get list of available xcode versions
+  command: "{{ xcversion_bin.stdout }} list"
+  register: xcode_available_status
+  changed_when: False
+
+-
+  name: Update cached xcode version for user
+  command: "{{ xcversion_bin.stdout }} update"
+
 - debug:
     msg: "Installing Xcode ({{ xcode_versions | join(', ') }}). This may take over 30 minutes for each version. Please be patient."
 
