@@ -2,3 +2,10 @@
 
 repo: "rhel-7-server-optional-rpms"
 java_version: 1.8.0
+
+osx_jdk_ver: 8
+osx_jdk_patch: 144
+osx_jdk_str: "{{ osx_jdk_ver }}u{{ osx_jdk_patch }}"
+osx_jdk_req_url: "http://download.oracle.com/otn-pub/java/jdk/{{ osx_jdk_str }}-b01/090f390dda5b47b9b721c7dfaa008135/jdk-{{ osx_jdk_str }}-macosx-x64.dmg"
+osx_jdk_req_headers: "Cookie:gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie"
+osx_jdk_archive_path: /tmp/jdk.dmg
