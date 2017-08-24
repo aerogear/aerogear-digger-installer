@@ -21,15 +21,13 @@ ruby_version: ruby-2.3.3-latest
 node_versions:
 - 6
 
-xcode_install_version: "2.2.0"
+xcode_install_version: "2.2.1"
 
 gem_packages:
 - name: domain_name
   gem_source: "{{remote_tmp_dir}}/{{ruby_domain_name_gem_name}}"
-#- name: xcode-install
-#  version: "{{xcode_install_version}}"
 - name: xcode-install
-  repository: https://github.com/aerogear/xcode-install.git
+  version: "{{xcode_install_version}}"
 
 cocoapods_version: "1.1.1"
 
