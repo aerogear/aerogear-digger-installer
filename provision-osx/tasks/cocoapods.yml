@@ -17,6 +17,6 @@
   changed_when: pod_repo_update.stdout.find('Already up-to-date') == -1
   environment:
     PATH: "{{ buildfarm_env_path.stdout }}"
-    LANG: "{{ buildfarm_lang_env_var.stdout }}"
+    LANG: "{{ buildfarm_env_lang.stdout }}"
     http_proxy: "{{ proxy_url | default('') }}"
     https_proxy: "{{ proxy_url | default('') }}"
