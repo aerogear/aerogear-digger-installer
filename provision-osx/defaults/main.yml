@@ -24,8 +24,8 @@ node_versions:
 xcode_install_version: "2.2.1"
 
 gem_packages:
-- name: domain_name
-  gem_source: "{{remote_tmp_dir}}/{{ruby_domain_name_gem_name}}"
+#- name: domain_name
+#  gem_source: "{{remote_tmp_dir}}/{{ruby_domain_name_gem_name}}"
 - name: xcode-install
   version: "{{xcode_install_version}}"
 
