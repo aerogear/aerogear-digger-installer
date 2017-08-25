@@ -22,3 +22,11 @@
   lineinfile:
     dest: ~/.bash_profile
     line: "export LANG={{ buildfarm_lang_env_var }}"
+
+-
+  name: Fix user cache folder permission
+  file:
+    path: "/Users/{{ macos_user }}/Library/Caches"
+    owner: "{{ macos_user }}"
+    recurse: yes
+  become: true
