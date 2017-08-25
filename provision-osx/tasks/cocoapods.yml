@@ -11,8 +11,24 @@
   become: yes
 
 -
+  name: Check cocoapods master repo
+  stat:
+    path: ~/.cocoapods/repos/master
+  register: pod_master_repo
+
+-
+  name: Setup cocoapods repo
+  shell: bash -lc "pod setup"
+  environment:
+    PATH: "{{ buildfarm_env_path.stdout }}"
+    LANG: "{{ buildfarm_env_lang.stdout }}"
+    http_proxy: "{{ proxy_url | default('') }}"
+    https_proxy: "{{ proxy_url | default('') }}"
+  when: pod_master_repo.stat.exists == False
+
+-
   name: Update Cocoapods
-  shell: bash -lc "pod repo update"
+  shell: bash -lc "pod repo update master"
   register: pod_repo_update
   changed_when: pod_repo_update.stdout.find('Already up-to-date') == -1
   environment:
