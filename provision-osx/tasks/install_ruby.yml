@@ -34,7 +34,7 @@
 
 -
   name: install gem packages
-  shell: "gem install {{ item.item.name }} -v {{ item.item.version }}"
+  shell: "gem install {{ item.item.name }} -v {{ item.item.version }} --minimal-deps"
   with_items: "{{ gem_installed.results }}"
   environment:
     http_proxy: "{{ proxy_url | default('') }}"

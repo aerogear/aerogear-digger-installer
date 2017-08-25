@@ -46,12 +46,12 @@
 
 -
   name: Install xcode versions
-  command: "{{ xcversion_bin.stdout }} install {{ item }}"
+  command: "{{ xcversion_bin.stdout }} install {{ item }} --no-switch"
   with_items: "{{ xcode_versions }}"
   when: xcode_install_user is defined and xcode_install_password is defined
   register: xcode_install
   become: yes
-  async: 1000
+  async: 10000
   poll: 0
   environment:
     XCODE_INSTALL_USER: "{{ xcode_install_user }}"
@@ -62,10 +62,10 @@
   async_status: jid={{ item.ansible_job_id }}
   register: progress
   until: progress.finished
-  retries: 45
+  retries: 60
   delay: 60
-  failed_when: (progress.stdout is defined and progress.stdout.find('already installed') == -1) or ( progress.stdout is defined and progress.stderr.find('The specified Apple developer account credentials are incorrect.') != -1)
-  changed_when: progress.stdout is defined and progress.stdout.find('already installed') == -1
+  failed_when: (progress.stdout is defined and progress.stderr.find('The specified Apple developer account credentials are incorrect.') != -1)
+  changed_when: progress.stderr is defined and progress.stderr.find('already installed') == -1
   with_items: "{{ xcode_install.results }}"
   become: yes
 
