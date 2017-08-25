@@ -28,7 +28,7 @@
         "to": {
           "kind": "Service",
           "name": "${JENKINS_SERVICE_NAME}"
-{% if jenkins_route_protocol == 'https' %}
+{% if jenkins_route_protocol is undefined or jenkins_route_protocol == 'https' %}
          },
         "tls": {
           "termination": "edge",
