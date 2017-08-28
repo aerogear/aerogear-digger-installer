@@ -1,0 +1,76 @@
+---
+
+-
+  set_fact:
+    volume_path: "/Volumes/JDK {{ osx_jdk_ver }} Update {{ osx_jdk_patch }}"
+    pkg_path: "/Volumes/JDK {{ osx_jdk_ver }} Update {{ osx_jdk_patch }}/JDK {{ osx_jdk_ver }} Update {{ osx_jdk_patch }}.pkg"
+
+-
+  name: Check java installation
+  shell: java -version
+  failed_when: false
+  changed_when: false
+  register: java_cmd
+
+-
+  name: Check java tmp archive
+  stat:
+    path: "{{ osx_jdk_archive_path }}"
+  register: java_archive
+
+-
+  name: Check java volume
+  stat:
+    path: "{{ volume_path }}"
+  register: jdk_volume_path
+
+-
+  name: Prompt to accept license
+  pause:
+    prompt: |
+      Unmet dependency: Java
+      Press enter to accept oracles jdk license and install java
+      http://www.oracle.com/technetwork/java/javase/terms/license/index.html
+  when:
+    - java_cmd.rc != 0
+    - java_archive.stat.exists == False
+
+-
+  name: Download java
+  get_url:
+    url: "{{ osx_jdk_req_url }}"
+    headers: "{{ osx_jdk_req_headers }}"
+    dest: "{{ osx_jdk_archive_path }}"
+  become: true
+  when:
+    - java_cmd.rc != 0
+    - java_archive.stat.exists == False
+  environment:
+    http_proxy: "{{ proxy_url | default('') }}"
+    https_proxy: "{{ proxy_url | default('') }}"
+
+-
+  name: Mount jdk archive
+  shell: hdiutil attach "{{ osx_jdk_archive_path }}"
+  become: true
+  when: java_cmd.rc != 0
+
+-
+  name: Install jdk pkg
+  shell: "installer -pkg '{{ pkg_path }}' -target /"
+  become: true
+  when: java_cmd.rc != 0
+
+-
+  name: Unmount jdk archive
+  shell: "hdiutil detach '{{ volume_path }}'"
+  become: true
+  when: jdk_volume_path.stat.exists == True
+
+-
+  name: Delete jdk archive
+  file:
+    path: "{{ osx_jdk_archive_path }}"
+    state: absent
+  become: true
+  when: java_archive.stat.exists == True

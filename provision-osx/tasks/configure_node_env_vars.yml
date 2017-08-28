@@ -1,3 +1,5 @@
+---
+
   -
     name: Get build farm env BASH
     shell: "source ~/.bash_profile && echo $BASH"
@@ -5,26 +7,8 @@
     changed_when: False
 
   -
-    name: Get build farm env GEM_HOME
-    shell: "source ~/.bash_profile && rvm gemdir"
-    register: buildfarm_env_gem
-    changed_when: False
-
-  -
-    name: Get build farm env NVM_PREFFIX
-    shell: "source ~/.bash_profile && echo $NVM_PREFFIX"
-    register: buildfarm_env_nvm
-    changed_when: False
-
-  -
-    name: Get RVM env vars
-    shell: "source ~/.bash_profile && rvm use {{ ruby_version }} && rvm env | grep ' PATH='"
-    register: rvm_path
-    changed_when: False
-
-  -
     name: Get build farm env PATH
-    shell: "{{ rvm_path.stdout }} && echo $PATH:/usr/local/bin:/usr/local/sbin"
+    shell: "source ~/.bash_profile && echo $PATH:/usr/local/bin:/usr/local/sbin"
     register: buildfarm_env_path
     changed_when: False
 

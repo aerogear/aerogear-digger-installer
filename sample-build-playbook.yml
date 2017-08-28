@@ -11,6 +11,7 @@
   hosts: master
   remote_user: root
   roles:
+    - {role: java, tags: linux}
     - {role: deploy-jenkins, tags: deploy, deploy-jenkins }
     - {role: android-sdk,  tags: deploy, android-sdk}
     - {role: configure-buildfarm, tags: deploy, configure-buildfarm}
@@ -21,6 +22,7 @@
   hosts: macos
   remote_user: "{{ macos_user }}"
   roles:
+    - {role: java, tags: osx}
     - {role: provision-osx,  tags: provision-osx}
   vars_files:
     - "vars/buildfarm.yml"

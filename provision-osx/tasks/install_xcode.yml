@@ -1,49 +1,43 @@
 ---
 
 -
-  name: Check if ruby_domain_name gem is already installed
-  shell: "gem list -i '^domain_name$'"
-  args:
-    executable: /bin/bash
+  name: Get xcversion binary path
+  shell: source ~/.bash_profile && which xcversion
+  register: xcversion_bin
   changed_when: False
-  failed_when: ruby_domain_name_installed.stderr and 'command not found' in ruby_domain_name_installed.stderr
-  register: ruby_domain_name_installed
-
--
-  name: Copy ruby_domain_name gem to remote host
-  copy:
-     src: "{{ruby_domain_name_file_path}}"
-     dest: "{{remote_tmp_dir}}/{{ruby_domain_name_gem_name}}"
-     mode: 0755
-  when: ruby_domain_name_installed.rc != 0
-
--
-  name: Install ruby_domain_name gem
-  shell: "gem install {{remote_tmp_dir}}/{{ruby_domain_name_gem_name}}"
-  args:
-    executable: /bin/bash
-  become: yes
-  when: ruby_domain_name_installed.rc != 0
-
--
-  name: Install xcode-install gem package
-  shell: "gem install --conservative --no-ri --no-rdoc xcode-install -v {{ xcode_install_version | default('\"\"') }}"
-  args:
-    executable: /bin/bash
-  become: yes
-  environment:
-    http_proxy: "{{ proxy_url | default('') }}"
-    https_proxy: "{{ proxy_url | default('') }}"
+  failed_when: xcversion_bin.rc != 0
 
 -
   name: Install command line tools
-  shell: source ~/.bash_profile && xcversion install-cli-tools
+  shell: "{{ xcversion_bin.stdout }} install-cli-tools"
   args:
     executable: /bin/bash
+  become: yes
   register: xcode_cli_tools_install
   when: xcode_install_user is defined and xcode_install_password is defined
   failed_when: xcode_cli_tools_install.rc != 0 and xcode_cli_tools_install.stdout.find('already installed') == -1
   changed_when: xcode_cli_tools_install.stdout.find('already installed') == -1
+
+-
+  name: Get list of available xcode versions
+  command: "{{ xcversion_bin.stdout }} list --all"
+  register: xcode_available_status
+  changed_when: False
+  become: yes
+  environment:
+    XCODE_INSTALL_USER: "{{ xcode_install_user }}"
+    XCODE_INSTALL_PASSWORD: "{{ xcode_install_password }}"
+    FASTLANE_SESSION: "{{ xcode_install_session_token | default(omit) }}"
+
+-
+  name: Update cached xcode versions for {{ ansible_user }}
+  command: "{{ xcversion_bin.stdout }} update"
+  become: yes
+  when: "item not in xcode_available_status.stdout"
+  register: do_update
+  until: do_update.rc == 0
+  with_items:
+    -  "{{ xcode_versions }}"
   environment:
     XCODE_INSTALL_USER: "{{ xcode_install_user }}"
     XCODE_INSTALL_PASSWORD: "{{ xcode_install_password }}"
@@ -52,17 +46,49 @@
 - debug:
     msg: "Installing Xcode ({{ xcode_versions | join(', ') }}). This may take over 30 minutes for each version. Please be patient."
 
-# Check here for versions already installed
 -
   name: Install xcode versions
-  shell: "source ~/.bash_profile && xcversion install {{ item }}"
-  args:
-    executable: /bin/bash
+  command: "{{ xcversion_bin.stdout }} install {{ item }} --no-switch"
   with_items: "{{ xcode_versions }}"
   when: xcode_install_user is defined and xcode_install_password is defined
   register: xcode_install
-  failed_when: xcode_cli_tools_install.rc != 0 and xcode_cli_tools_install.stdout.find('already installed') == -1
-  changed_when: xcode_cli_tools_install.stdout.find('already installed') == -1
+  become: yes
+  async: 10000
+  poll: 0
   environment:
     XCODE_INSTALL_USER: "{{ xcode_install_user }}"
     XCODE_INSTALL_PASSWORD: "{{ xcode_install_password }}"
+    FASTLANE_SESSION: "{{ xcode_install_session_token | default(omit) }}"
+
+-
+  name: Poll long running xcode install task
+  async_status: jid={{ item.ansible_job_id }}
+  register: progress
+  until: progress.finished
+  retries: 60
+  delay: 60
+  failed_when: (progress.stdout is defined and progress.stderr.find('The specified Apple developer account credentials are incorrect.') != -1)
+  changed_when: progress.stderr is defined and progress.stderr.find('already installed') == -1
+  with_items: "{{ xcode_install.results }}"
+  become: yes
+
+-
+  name: Check xcode symlink
+  stat:
+    path: /Applications/Xcode.app
+  register: xcode_symlink
+
+-
+  name: Set default xcode symlink path
+  set_fact:
+    xcode_symlink_path: "/Applications/Xcode-{{ xcode_default_version }}.app"
+  become: True
+
+-
+  name: Set default xcode symlink
+  file:
+    state: link
+    src: "/Applications/Xcode-{{ xcode_default_version }}.app"
+    dest: /Applications/Xcode.app
+  when: xcode_symlink.stat.exists == False or xcode_symlink.stat.lnk_source != xcode_symlink_path
+  become: True

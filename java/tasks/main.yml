@@ -1,28 +1,15 @@
-
 ---
 
 -
-  name: Set OpenJDK packages
-  set_fact:
-    openjdk_packages:
-      - "java-{{ java_version }}-openjdk"
-      - "java-{{ java_version }}-openjdk-devel"
-  when: openjdk_packages is not defined
+  include: linux.yml
+  when: ansible_distribution != 'MacOSX'
+  tags:
+    - java
+    - linux
 
 -
-  name: Installs openjdk
-  yum:
-    name: "{{ item }}"
-    enablerepo: "{{ repo }}"
-    state: installed
-  with_items: "{{ openjdk_packages }}"
-  environment:
-    http_proxy: "{{ proxy_url | default('') }}"
-    https_proxy: "{{ proxy_url | default('') }}"
-  become: true
-
--
-  name: Set java home
-  lineinfile:
-    dest: "$HOME/.bashrc"
-    line: "JAVA_HOME=/etc/alternatives/java_sdk_{{ java_version }}"
+  include: osx.yml
+  when: ansible_distribution == 'MacOSX'
+  tags:
+    - java
+    - osx
