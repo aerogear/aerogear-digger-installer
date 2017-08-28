@@ -2,6 +2,9 @@
 
 repo: "rhel-7-server-optional-rpms"
 java_version: 1.8.0
+openjdk_packages:
+  - "java-{{ java_version }}-openjdk"
+  - "java-{{ java_version }}-openjdk-devel"
 
 osx_jdk_ver: 8
 osx_jdk_patch: 144

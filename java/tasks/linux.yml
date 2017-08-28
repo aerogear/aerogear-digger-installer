@@ -1,14 +1,6 @@
 ---
 
 -
-  name: Set OpenJDK packages
-  set_fact:
-    openjdk_packages:
-      - "java-{{ java_version }}-openjdk"
-      - "java-{{ java_version }}-openjdk-devel"
-  when: openjdk_packages is not defined
-
--
   name: Installs openjdk
   yum:
     name: "{{ item }}"
