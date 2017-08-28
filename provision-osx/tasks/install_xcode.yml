@@ -27,19 +27,21 @@
   environment:
     XCODE_INSTALL_USER: "{{ xcode_install_user }}"
     XCODE_INSTALL_PASSWORD: "{{ xcode_install_password }}"
+    FASTLANE_SESSION: "{{ xcode_install_session_token | default(omit) }}"
 
 -
   name: Update cached xcode versions for {{ ansible_user }}
   command: "{{ xcversion_bin.stdout }} update"
   become: yes
-  environment:
-    XCODE_INSTALL_USER: "{{ xcode_install_user }}"
-    XCODE_INSTALL_PASSWORD: "{{ xcode_install_password }}"
   when: "item not in xcode_available_status.stdout"
   register: do_update
   until: do_update.rc == 0
   with_items:
     -  "{{ xcode_versions }}"
+  environment:
+    XCODE_INSTALL_USER: "{{ xcode_install_user }}"
+    XCODE_INSTALL_PASSWORD: "{{ xcode_install_password }}"
+    FASTLANE_SESSION: "{{ xcode_install_session_token | default(omit) }}"
 
 - debug:
     msg: "Installing Xcode ({{ xcode_versions | join(', ') }}). This may take over 30 minutes for each version. Please be patient."
@@ -56,6 +58,7 @@
   environment:
     XCODE_INSTALL_USER: "{{ xcode_install_user }}"
     XCODE_INSTALL_PASSWORD: "{{ xcode_install_password }}"
+    FASTLANE_SESSION: "{{ xcode_install_session_token | default(omit) }}"
 
 -
   name: Poll long running xcode install task
