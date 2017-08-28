@@ -18,7 +18,7 @@ proxy_protocol=http
 
 # Optional variables. Uncomment those to provide overrides.
 
-# Specify the project name. Default value is `aerogear-digger`
+# Specify the project name. Default value is `digger`
 # project_name=
 
 # The protocol of the Jenkins server. Default value is `https`

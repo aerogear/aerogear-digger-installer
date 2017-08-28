@@ -146,7 +146,7 @@ To run this section as a standalone step you must specify the `osx_configure_bui
 
 ## Other options
 * `remote_tmp_dir` - A directory where downloaded scripts and other miscellaneous files can be stored for the duration of the job.
-* `project_name` - Name of the Jenkins project in OpenShift. Defaults to `jenkins`.
+* `project_name` - Name of the Jenkins project in OpenShift. Defaults to `digger`.
 
 
 ## Configure Proxy

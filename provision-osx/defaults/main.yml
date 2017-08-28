@@ -92,7 +92,7 @@ buildfarm_node_mode: NORMAL
 
 buildfarm_node_description: macOS node for the buildfarm
 
-project_name: jenkins
+project_name: digger
 
 proxy_device: Ethernet
 proxy_ctx:

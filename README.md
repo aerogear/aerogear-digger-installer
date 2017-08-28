@@ -67,7 +67,7 @@ To pass it with the ansible-playbook, it should look like:
 
 ### Execute the playbook:
 
-#### Example command line to execute aerogear-digger ansible install
+#### Example command line to execute aerogear digger ansible install
 ```
 ansible-playbook -i <your-inventories-file> sample-build-playbook.yml
 ```
