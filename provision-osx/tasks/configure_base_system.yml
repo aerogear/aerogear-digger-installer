@@ -28,5 +28,6 @@
   file:
     path: "/Users/{{ macos_user }}/Library/Caches"
     owner: "{{ macos_user }}"
+    state: directory
     recurse: yes
   become: true
