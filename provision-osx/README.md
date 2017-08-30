@@ -53,10 +53,6 @@ other gems can be specified using the `gem_packages` variable.
 To run this section as a standalone step you must specify the `osx_install_ruby` tag.
 
 ### Options
-* `rvm_install_url` - The URL of RVM installation script (defaults to GitHub release).
-* `rvm_install_file_name` - What to name the file on the node.
-* `rvm_gpg_url` - The URL of the RVM prerequisite gpg key.
-* `rvm_gpg_file_name` - What to name the file on the node.
 * `ruby_version` - The version of Ruby to install on the node.
 * `cocoapods_version` - The version of the Cocoapods gem to install.
 * `gem_packages` - A list of gems to install on the node. Format: `{ name: <PACKAGE_NAME>, version: <PACKAGE_VERSION> }`.
