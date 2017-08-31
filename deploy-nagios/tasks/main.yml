@@ -18,13 +18,13 @@
 -
   name: "Get jenkins url"
   shell: "oc get route jenkins --namespace={{ project_name }} -o jsonpath='{.spec.host}'"
+  changed_when: False
   register: route_output
 
 -
   name: "Set jenkins url"
   set_fact:
-    jenkins_url: "{{ route_output.stdout }}"
-  when: route_output | changed
+    jenkins_url: "{{ route_output.stdout | default('') }}"
 
 -
   name: "Get image version"
@@ -35,6 +35,7 @@
   name: "Update local nagios template with image version and tag"
   template:
     src: nagios-template.j2
+    force: yes
     dest: "{{ buildfarm_templates_dir }}/nagios-template.json"
 
 -

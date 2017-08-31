@@ -130,12 +130,20 @@
                     "value": "${RHMAP_HOSTGROUPS}"
                   },
                   {
-                    "name": "MAC_SERVERS",
-                    "value": "${MAC_SERVERS}"
+                    "name": "JENKINS_HOST",
+                    "value": "${JENKINS_HOST}"
                   },
                   {
-                    "name": "JENKINS_URL",
-                    "value": "${JENKINS_URL}"
+                    "name": "JENKINS_USER",
+                    "value": "${JENKINS_USER}"
+                  },
+                  {
+                    "name": "JENKINS_PASS",
+                    "value": "${JENKINS_PASS}"
+                  },
+                  {
+                    "name": "PLATFORMS",
+                    "value": "${PLATFORMS}"
                   }
                 ],
                 "image": "${NAGIOS_IMAGE}",
@@ -257,14 +265,19 @@
       "value": "{{ jenkins_url }}"
     },
     {
-      "description": "The url(s) of the Jenkins instance",
+      "description": "The Jenkins user name",
       "name": "JENKINS_USER",
       "value": "{{ jenkins_user | default('admin') }}"
     },
     {
-      "description": "The url(s) of the Jenkins instance",
+      "description": "The user password",
       "name": "JENKINS_PASS",
       "value": "{{ jenkins_pass | default('password')}}"
+    },
+    {
+      "name": "PLATFORMS",
+      "description": "The services that should be monitored. Format 'ios,android'",
+      "value": {% if digger_platforms is defined and digger_platforms != ''%}"{{ digger_platforms }}"{% elif groups['macos'] is defined and groups['macos'] | length > 0 %}"android,ios"{% else %}"android"{% endif %}
     }
   ]
 }
