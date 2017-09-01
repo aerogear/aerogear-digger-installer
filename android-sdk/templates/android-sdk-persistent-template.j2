@@ -121,9 +121,14 @@
                   }
                 ],
                 "resources": {
-                  "limits": {
-                    "memory": "${MEMORY_LIMIT}"
-                  }
+                "limits": {
+                  "memory": "${MEMORY_LIMIT}",
+                  "cpu": "${CPU_LIMIT}"
+                },
+                "requests": {
+                  "memory": "${MEMORY_REQUESTS}",
+                  "cpu": "${CPU_REQUESTS}"
+                }
                 },
                 "volumeMounts": [
                   {
@@ -209,6 +214,24 @@
       "displayName": "Memory Limit",
       "description": "Maximum amount of memory the container can use.",
       "value": "1Gi"
+    },
+    {
+      "name": "CPU_LIMIT",
+      "displayName": "CPU Limit",
+      "description": "Maximum amount of CPU the container can use.",
+      "value": "800m"
+    },
+    {
+      "name": "MEMORY_REQUESTS",
+      "displayName": "Memory Requests",
+      "description": "Min memory that can be requested on a node by a container",
+      "value": "10Mi"
+    },
+    {
+      "name": "CPU_REQUESTS",
+      "displayName": "CPU Requests",
+      "description": "Min CPU that can be requested on a node by a container",
+      "value": "1m"
     },
     {
       "name": "ANDROID_SDK_VOLUME_CAPACITY",

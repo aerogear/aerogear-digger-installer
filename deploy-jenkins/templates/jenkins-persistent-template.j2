@@ -134,7 +134,12 @@
                 ],
                 "resources": {
                   "limits": {
-                    "memory": "${MEMORY_LIMIT}"
+                    "memory": "${MEMORY_LIMIT}",
+                    "cpu": "${CPU_LIMIT}"
+                  },
+                  "requests": {
+                    "memory": "${MEMORY_REQUESTS}",
+                    "cpu": "${CPU_REQUESTS}"
                   }
                 },
                 "volumeMounts": [
@@ -275,6 +280,24 @@
       "displayName": "Memory Limit",
       "description": "Maximum amount of memory the container can use.",
       "value": "{{ master_memory_limit | default('3Gi') }}"
+    },
+    {
+      "name": "CPU_LIMIT",
+      "displayName": "CPU Limit",
+      "description": "Maximum amount of CPU the container can use.",
+      "value": "1"
+    },
+    {
+      "name": "MEMORY_REQUESTS",
+      "displayName": "Memory Requests",
+      "description": "Min memory that can be requested on a node by a container",
+      "value": "200Mi"
+    },
+    {
+      "name": "CPU_REQUESTS",
+      "displayName": "CPU Requests",
+      "description": "Min CPU that can be requested on a node by a container",
+      "value": "100m"
     },
     {
       "name": "VOLUME_CAPACITY",
