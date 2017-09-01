@@ -75,14 +75,36 @@
     - nagios_create_result.stderr and nagios_create_result.stderr != '' and 'already exists' not in nagios_create_result.stderr
   changed_when: nagios_create_result.rc == 0 or (nagios_create_result.rc == 1 and 'created' in nagios_create_result.stdout)
 
+
 -
-  name: "Poll for Pods to become ready"
-  command: oc get dc nagios --namespace={{ project_name }} --output jsonpath='{.status.availableReplicas}'
-  register: poll_result
-  until: poll_result.rc == 0 and poll_result.stdout | int > 0
-  retries: 60
-  delay: 10
-  when: nagios_create_result|changed
+  name: Determine what polling logic to use
+  local_action: stat path=../playbooks/tasks/poller.yml
+  register: poller
+
+
+- include: ../playbooks/tasks/poller.yml
+  static: no
+  when: poller.stat.exists
+
+-
+  block:
+
+    -
+      name: "Poll for Pods to become ready"
+      command: oc get dc nagios --namespace={{ project_name }} --output jsonpath='{.status.availableReplicas}'
+      register: poll_result
+      until: poll_result.rc == 0 and poll_result.stdout | int > 0
+      retries: 60
+      delay: 10
+      when: nagios_create_result|changed
+
+  rescue:
+
+    -
+      name: "Attempting redeploy of failed Pod"
+      command: oc deploy --retry dc/nagios --namespace={{ project_name }}
+  when: not poller.stat.exists
+
 
 - name: Force status check to schedule in Nagios container
   shell: "oc exec --namespace {{ project_name }} $(oc get po --namespace {{ project_name }}  | grep nagios | awk '{print $1}') -c nagios -- python /opt/rhmap/host-svc-check"
