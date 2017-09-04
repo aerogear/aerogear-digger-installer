@@ -32,6 +32,21 @@
     nagios_image_version: "{{ nagios_image_def[0][0].image }}"
 
 -
+  name: "Set value for platforms"
+  set_fact:
+    digger_platforms: "{{ digger_platforms if digger_platforms is defined and digger_platforms != '' else 'android,ios' if groups['macos'] is defined and groups['macos'] | length > 0 else 'android' }}"
+
+- name: "oc get dc nagios"
+  command: oc get dc nagios
+  register: nagios_dc
+  failed_when: "'NotFound' not in nagios_dc.stderr"
+
+- name: "Update dc with platforms"
+  command: "oc env dc/nagios PLATFORMS={{ digger_platforms }}"
+  when: nagios_dc.stderr == ""
+
+
+-
   name: "Update local nagios template with image version and tag"
   template:
     src: nagios-template.j2

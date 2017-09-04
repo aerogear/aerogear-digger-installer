@@ -277,6 +277,7 @@
     {
       "name": "PLATFORMS",
       "description": "The services that should be monitored. Format 'ios,android'",
+      "value": "{{ digger_platforms | default('android') }}",
       "value": {% if digger_platforms is defined and digger_platforms != ''%}"{{ digger_platforms }}"{% elif groups['macos'] is defined and groups['macos'] | length > 0 %}"android,ios"{% else %}"android"{% endif %}
     }
   ]
