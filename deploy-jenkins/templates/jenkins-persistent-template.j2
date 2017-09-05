@@ -130,6 +130,10 @@
                   {
                     "name": "JNLP_SERVICE_NAME",
                     "value": "${JNLP_SERVICE_NAME}"
+                  },
+                  {
+                    "name": "JENKINS_PASSWORD",
+                    "value": "${JENKINS_PASSWORD}"
                   }
                 ],
                 "resources": {
@@ -294,6 +298,12 @@
       "displayName": "Jenkins Image Version",
       "description": "Image Version to be used in the Jenkins Container",
       "value": "3.6.0"
+    },
+    {
+      "name": "JENKINS_PASSWORD",
+      "displayName": "User password",
+      "description": "Password for default admin user when not using oauth",
+      "value": "{{ jenkins_pass| default ('password') }}"
     }
   ],
   "labels": {
