@@ -36,15 +36,6 @@
   set_fact:
     digger_platforms: "{{ digger_platforms if digger_platforms is defined and digger_platforms != '' else 'android,ios' if groups['macos'] is defined and groups['macos'] | length > 0 else 'android' }}"
 
-- name: "Check for nagios deployment"
-  command: "oc get dc nagios --namepace={{ project_name }}"
-  register: nagios_dc
-  failed_when: "'NotFound' not in nagios_dc.stderr"
-
-- name: "Update dc with platforms"
-  command: "oc env dc/nagios PLATFORMS={{ digger_platforms }}"
-  when: nagios_dc.stderr == ""
-
 
 -
   name: "Update local nagios template with image version and tag"
@@ -90,6 +81,24 @@
     - nagios_create_result.stderr and nagios_create_result.stderr != '' and 'already exists' not in nagios_create_result.stderr
   changed_when: nagios_create_result.rc == 0 or (nagios_create_result.rc == 1 and 'created' in nagios_create_result.stdout)
 
+
+-
+  name: "Pause for object creation"
+  pause:
+    seconds: 5
+
+
+-
+  name: "Check existing Nagios environment"
+  command: oc get dc nagios -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name=="PLATFORMS")].value}' --namespace={{ project_name }}
+  register: current_env
+  changed_when: False
+  failed_when: False
+
+
+- name: "Update deployment config with platforms"
+  command: "oc env dc/nagios PLATFORMS={{ digger_platforms }} --overwrite=true --namespace={{ project_name }}"
+  when: digger_platforms is defined and digger_platforms != current_env.stdout
 
 -
   name: Determine what polling logic to use
