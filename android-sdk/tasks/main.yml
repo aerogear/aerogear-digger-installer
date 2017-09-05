@@ -61,14 +61,33 @@
     - deploy-sdk-pod
 
 -
-  name: "Poll for Pods to become ready"
-  command: oc get dc android-sdk --namespace={{ project_name }} --output jsonpath='{.status.availableReplicas}'
-  register: poll_result
-  until: poll_result.rc == 0 and poll_result.stdout | int > 0
-  retries: 60
-  delay: 10
-  tags:
-    - deploy-sdk-pod
+  name: Determine what polling logic to use
+  local_action: stat path=../playbooks/tasks/poller.yml
+  register: poller
+
+
+- include: ../playbooks/tasks/poller.yml
+  static: no
+  when: poller.stat.exists
+
+-
+  block:
+
+    -
+      name: "Poll for Pods to become ready"
+      command: oc get dc android-sdk --namespace={{ project_name }} --output jsonpath='{.status.availableReplicas}'
+      register: poll_result
+      until: poll_result.rc == 0 and poll_result.stdout | int > 0
+      retries: 60
+      delay: 10
+      tags:
+        - deploy-sdk-pod
+  rescue:
+
+    -
+      name: "Attempting redeploy of failed Pod"
+      command: oc deploy --retry dc/android-sdk --namespace={{ project_name }}
+  when: not poller.stat.exists
 
 -
   name: "Get the Android SDK pod name"

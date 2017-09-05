@@ -29,8 +29,8 @@ proxy_protocol=http
 
 # The user and password of the jenkins installation
 # uncomment if you want to override the default admin user credentials
-# jenkins_user=
-# jenkins_pass=
+# jenkins_user=admin
+# jenkins_pass=password
 
 # Maximum amount of memory the Jenkins master container can use. Defaults to `3Gi`
 # master_memory_limit=
