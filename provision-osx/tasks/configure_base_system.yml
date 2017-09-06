@@ -26,8 +26,8 @@
 -
   name: Fix user cache folder permission
   file:
-    path: "/Users/{{ macos_user }}/Library/Caches"
-    owner: "{{ macos_user }}"
+    path: "/Users/{{ macos_user | default('jenkins') }}/Library/Caches"
+    owner: "{{ macos_user | default('jenkins') }}"
     state: directory
     recurse: yes
   become: true
