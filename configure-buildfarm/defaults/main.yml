@@ -73,5 +73,5 @@ jenkins_plugins:
 
   -
     name: "xcode-plugin"
-    version: 2.0.3
-    archive: "https://github.com/aerogear/xcode-plugin/releases/download/2.0.3-digger/xcode-plugin.hpi"
+    version: 2.0.4
+    archive: "https://github.com/aerogear/xcode-plugin/releases/download/2.0.4-digger/xcode-plugin.hpi"
