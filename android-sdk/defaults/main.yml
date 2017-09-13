@@ -1,4 +1,3 @@
 ---
 
-kubeconfig: /etc/origin/master/admin.kubeconfig
 android_sdk_home: /opt/android-sdk-linux

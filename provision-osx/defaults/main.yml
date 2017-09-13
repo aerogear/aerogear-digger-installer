@@ -10,12 +10,6 @@ ruby_domain_name_gem_name: domain_name-0.5.99999999.gem
 nvm_install_url: https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh
 nvm_install_file_name: install-nvm.sh
 
-rvm_install_url: https://raw.githubusercontent.com/rvm/rvm/master/binscripts/rvm-installer
-rvm_install_file_name: install-rvm.sh
-
-rvm_gpg_url: https://rvm.io/mpapis.asc
-rvm_gpg_file_name: mpapis.asc
-
 ruby_version: ruby-2.3.3-latest
 
 node_versions:
