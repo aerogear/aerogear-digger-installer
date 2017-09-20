@@ -36,3 +36,18 @@
     LANG: "{{ buildfarm_env_lang.stdout }}"
     http_proxy: "{{ proxy_url | default('') }}"
     https_proxy: "{{ proxy_url | default('') }}"
+
+-
+  name: Copy cocoapods update script
+  copy:
+     src: "cocoapods-update-repo"
+     dest: "{{pod_update_bin_path}}"
+     mode: 0755
+
+-
+  name: Set cocoapods cron job
+  cron:
+    name: "cocoapods cron job"
+    minute: '0'
+    hour: "*/{{ cocoapods_update_hour_loop }}"
+    job: "{{ pod_update_bin_path }} > /dev/null"
