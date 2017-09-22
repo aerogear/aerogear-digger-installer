@@ -95,3 +95,6 @@ proxy_ctx:
 
 buildfarm_lang_env_var: "en_US.UTF-8"
 buildfarm_path_env_var: "$PATH:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+
+cocoapods_update_hour_loop: 3
+pod_update_bin_path: /usr/local/bin/cocoapods-update-repo

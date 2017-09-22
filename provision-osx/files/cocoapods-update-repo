@@ -1,0 +1,23 @@
+#!/bin/sh
+
+REPOS_PATH=".cocoapods/repos"
+FOLDER="$HOME/$REPOS_PATH"
+ERROR_LOG_FILE="$HOME/.cocoapods/cocoapods-error.log"
+SUCCESS_LOG_FILE="$HOME/.cocoapods/cocoapods-success.log"
+
+for dir in `ls $FOLDER`;
+do
+    (
+      cd $FOLDER/$dir;
+      git fetch origin --quiet;
+      git reset --hard origin/master --quiet;
+    )
+    if [ $? -eq 0 ]; then
+      if [ -f $ERROR_LOG_FILE ] ; then
+        rm $ERROR_LOG_FILE
+      fi
+      touch $SUCCESS_LOG_FILE
+    else
+      touch $ERROR_LOG_FILE
+    fi
+done
