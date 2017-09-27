@@ -130,10 +130,6 @@
                     "value": "${RHMAP_HOSTGROUPS}"
                   },
                   {
-                    "name": "JENKINS_HOST",
-                    "value": "${JENKINS_HOST}"
-                  },
-                  {
                     "name": "JENKINS_USER",
                     "value": "${JENKINS_USER}"
                   },
@@ -258,11 +254,6 @@
       "description": "The name and tag of the Nagios Docker image",
       "name": "NAGIOS_IMAGE",
       "value": "{{ nagios_image_version }}"
-    },
-    {
-      "description": "The url(s) of the Jenkins instance",
-      "name": "JENKINS_HOST",
-      "value": "{{ jenkins_url }}"
     },
     {
       "description": "The Jenkins user name",
