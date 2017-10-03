@@ -22,7 +22,7 @@ deployments:
   - name: "nagios"
     containers:
     - name: "nagios"
-      image: "docker.io/aerogear/digger-nagios:dev"
+      image: "docker.io/aerogear/digger-nagios:v1.0"
 # the Jenkins username
 macos_user: jenkins
 
