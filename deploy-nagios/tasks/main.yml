@@ -142,7 +142,6 @@
   register: nagios_result
   failed_when: False
 
-
 -
   name: "Verify Nagios dashboard is green, fail otherwise"
   shell: echo {{ item }}
@@ -151,7 +150,19 @@
   failed_when:
     - "'critical' in nagios_dashboard.stdout or 'warning' in nagios_dashboard.stdout or 'unknown' in nagios_dashboard.stdout "
   changed_when: False
+  when:
+     - target is defined
+     - "'cluster' in target"
 
+-
+  name: "Verify Nagios dashboard is green, fail otherwise"
+  shell: echo {{ item }}
+  register: nagios_dashboard
+  with_items: "{{ nagios_result.stdout_lines }}"
+  failed_when:
+    - "'critical' in nagios_dashboard.stdout or 'warning' in nagios_dashboard.stdout"
+  changed_when: False
+  when: target is undefined or (target is defined and "'cluster' not in target")
 
 - debug: var=nagios_dashboard.stdout_lines
   when: nagios_dashboard|failed
