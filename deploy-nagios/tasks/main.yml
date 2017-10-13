@@ -139,9 +139,7 @@
   failed_when:
     - "'critical' in nagios_dashboard.stdout or 'warning' in nagios_dashboard.stdout or 'unknown' in nagios_dashboard.stdout "
   changed_when: False
-  when:
-     - target is defined
-     - "'cluster' in target"
+  when: "target is undefined or (target is defined and 'cluster' not in target)"
 
 -
   name: "Verify Nagios dashboard is green, fail otherwise"
@@ -149,9 +147,9 @@
   register: nagios_dashboard
   with_items: "{{ nagios_result.stdout_lines }}"
   failed_when:
-    - "'critical' in nagios_dashboard.stdout or 'warning' in nagios_dashboard.stdout"
+    - "'critical' in nagios_dashboard.stdout"
   changed_when: False
-  when: target is undefined or (target is defined and "'cluster' not in target")
+  when: "target is defined and 'cluster' in target"
 
 - debug: var=nagios_dashboard.stdout_lines
   when: nagios_dashboard|failed
