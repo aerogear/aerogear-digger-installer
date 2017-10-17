@@ -45,7 +45,7 @@ In the case of oc cluster up self signed certs are used. Pass the following vari
 this case.
 
 ```
- '-e jenkins_protocol=http'
+ '-e jenkins_route_protocol=http'
 ```
 
 ### Execute the playbook:
