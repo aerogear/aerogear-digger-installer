@@ -18,6 +18,6 @@ digger_platforms="android,ios"
 #proxy_ctx=["setwebproxy", "setsecurewebproxy"]
 
 [master]
-10.32.241.238
+127.0.0.1
 
 [macos]
