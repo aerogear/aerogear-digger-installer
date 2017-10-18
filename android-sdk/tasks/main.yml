@@ -149,16 +149,27 @@
 
 -
   name: "Checks if android sdk folder already exists"
-  stat:
-    path: "{{ android_sdk_home }}"
+  command: "oc rsh --namespace={{ project_name }} {{ android_sdk_podname }} test -f {{ android_sdk_home }}/tools/bin/sdkmanager"
   register: sdk_folder
   tags:
     - install-sdk
-
+  failed_when: false
+    
+-
+  name: "Prompt to accept license"
+  pause:
+    prompt: |
+      Press enter to accept Android's SDK license and install the SDK
+      https://developer.android.com/studio/index.html#linux-bundle
+  when:
+    - sdk_folder.rc == 1
+  tags:
+    - install-sdk
+    
 -
   name: "Install the Android SDK"
   command: "oc rsh --namespace={{ project_name }} {{ android_sdk_podname }} androidctl sdk install"
-  when: sdk_folder.stat.exists == False
+  when: sdk_folder.rc == 1
   tags:
     - install-sdk
 
