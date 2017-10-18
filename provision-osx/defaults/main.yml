@@ -59,6 +59,7 @@ homebrew_taps:
 
 xcode_versions:
 - '8.3.3'
+- '9'
 
 xcode_default_version: "{{ xcode_versions[0] }}"
 
