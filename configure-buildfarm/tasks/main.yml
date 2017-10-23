@@ -71,6 +71,7 @@
     dest: /tmp/jenkins-cli.jar
     force: yes
     mode: 0775
+    validate_certs: no
   tags:
     - plugins
     - proxy
@@ -89,13 +90,6 @@
     - proxy_host != ''
     - proxy_port is defined
     - proxy_port != ''
-  tags:
-     - proxy
-
--
-  name: "Configure HTTP Proxy Settings"
-  command: java -jar /tmp/jenkins-cli.jar -remoting -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }}  groovy /tmp/proxy-config.groovy
-  when: not proxy_task|skipped
   tags:
      - proxy
 
@@ -121,13 +115,6 @@
   tags:
     - config
 
-- name: "Configure Kubernetes plugin"
-  shell: "java -jar /tmp/jenkins-cli.jar -remoting -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }}  groovy  /tmp/kubernetes-plugin-config.groovy"
-  register: output
-  failed_when: output.stderr != ''
-  tags:
-     - config
-
 - name: "Copy configure slave script"
   copy:
      src: "{{ groovy_script_dir }}/configure-slave-subsystem.groovy"
@@ -135,14 +122,6 @@
      mode: 0755
   tags:
     - config
-    - security
-
--
-  name: "Enable Agent → Master Access Control"
-  command: java -jar /tmp/jenkins-cli.jar -remoting -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }}  groovy /tmp/configure-slave-subsystem.groovy
-  register: master_slave_output
-  changed_when: '"Done" in master_slave_output.stdout'
-  tags:
     - security
 
 - name: "Copy configure plugins script"
@@ -154,36 +133,10 @@
     - config
 
 -
-  name: "Get list of missing and unmet Jenkins plugins"
-  command: java -jar /tmp/jenkins-cli.jar -remoting -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }}  groovy /tmp/configure-plugins.groovy  '{{ jenkins_plugins | to_json | replace('\n', '') }}'
-  register: plugins_output
-  changed_when: false
-  tags:
-    - plugins
+  include_tasks: jenkins-passwordless-key.yml
+  when: jenkins_private_key_password is not defined
 
 -
-  name: "Fetch required plugin"
-  get_url:
-    url: "{{ item.archive }}"
-    dest: /tmp/{{item.name}}.hpi
-    mode: 0775
-  environment:
-    http_proxy: "{{ proxy_url | default('') }}"
-    https_proxy: "{{ proxy_url | default('') }}"
-  with_items: "{{ jenkins_plugins }}"
-  when: plugins_output.stdout.find( item.name) != -1
-  register: fetched_plugins
-  notify:
-    - remove plugins
-  tags:
-    - plugins
+  include_tasks: jenkins-password-key.yml
+  when: jenkins_private_key_password is defined
 
-# Leave this task as the last one as it will restart Jenkins
--
-  name: "Install plugins and restart Jenkins server"
-  command: "java -jar /tmp/jenkins-cli.jar -remoting -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }} install-plugin /tmp/{{ item.name }}.hpi {{ (item == jenkins_plugins[-1]) | ternary('-restart','') }}"
-  with_items: "{{ jenkins_plugins }}"
-  when: plugins_output.stdout.find( item.name) != -1
-  register: installed_plugins
-  tags:
-    - plugins
