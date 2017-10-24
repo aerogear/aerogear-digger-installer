@@ -133,10 +133,10 @@
     - config
 
 -
-  include_tasks: jenkins-passwordless-key.yml
+  include: jenkins-passwordless-key.yml
   when: jenkins_private_key_password is not defined
 
 -
-  include_tasks: jenkins-password-key.yml
+  include: jenkins-password-key.yml
   when: jenkins_private_key_password is defined
 
