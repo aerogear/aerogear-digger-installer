@@ -4,6 +4,7 @@ master
 [Nodes:vars]
 ansible_connection=local
 target="cluster_up"
+skip_tls=true
 
 # OpenShift Credentials
 master_url='https://localhost:8443'
