@@ -10,7 +10,7 @@
 -
   name: "Setup the directory for productization"
   set_fact:
-    groovy_script_dir: ../roles/digger-installer/configure-buildfarm/files
+    groovy_script_dir: ../roles/aerogear-digger-installer/configure-buildfarm/files
   when: rhmap_version is defined
   tags:
     - plugins
