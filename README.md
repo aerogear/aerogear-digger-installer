@@ -57,6 +57,14 @@ by specifying following environment variable
 -e "add_public_key_automatically=true"
 ```
 
+If you're using Jenkins with OAuth, you must specify OAuth token:
+
+```
+-e "jenkins_oauth_token=<your_jenkins_oauth_token>"
+```
+
+otherwise the password from Jenkins DeploymentConfig will be used
+
 **:warning: Warning** This will replace the current value of `SSH Public Keys` in user's configuration page, so it is advised to use this option only if there is no public key already set. 
 
 Following configuration details are also replaced by the default values: `"Full Name": "Jenkins Admin"`, `"Description":""`

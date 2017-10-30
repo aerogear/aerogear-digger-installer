@@ -48,6 +48,16 @@
     - config
     - security
 
+- name: "Retrieve Jenkins password from DeploymentConfig"
+  command: oc get dc jenkins -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name=="JENKINS_PASSWORD")].value}' --namespace {{ project_name }}
+  register: jenkins_password
+  tags:
+    - plugins
+    - proxy
+    - config
+    - security
+  when: jenkins_oauth_token is undefined
+
 - name: "Add SSH public key to the user configuration page automatically"
   uri:
     url: "{{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }}/user/{{ jenkins_username | default('admin') }}/configSubmit"
@@ -57,8 +67,13 @@
     body: "json={\"fullName\": \"Jenkins Admin\", \"description\": \"\", \"userProperty10\": {\"authorizedKeys\": \"{{ public_key.stdout | urlencode }}\"}}"
     validate_certs: no
     user: admin
-    password: password
+    password: "{{ jenkins_oauth_token | default(jenkins_password.stdout) }}"
     status_code: 302
+  tags:
+    - plugins
+    - proxy
+    - config
+    - security
   when: add_public_key_automatically is defined
 
 - pause:
