@@ -48,6 +48,19 @@
     - config
     - security
 
+- name: "Add SSH public key to the user configuration page automatically"
+  uri:
+    url: "{{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }}/user/{{ jenkins_username | default('admin') }}/configSubmit"
+    method: POST
+    force_basic_auth: true
+    # 'fullName' and 'description' must be specified
+    body: "json={\"fullName\": \"Jenkins Admin\", \"description\": \"\", \"userProperty10\": {\"authorizedKeys\": \"{{ public_key.stdout | urlencode }}\"}}"
+    validate_certs: no
+    user: admin
+    password: password
+    status_code: 302
+  when: add_public_key_automatically is defined
+
 - pause:
     prompt: |
          Note: The following step is required. Playbook run will fail if skipped.
@@ -63,6 +76,7 @@
     - proxy
     - config
     - security
+  when: add_public_key_automatically is undefined
 
 
 - name: "Get the jenkins client cli jar"

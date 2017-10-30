@@ -48,6 +48,19 @@ this case.
  '-e jenkins_route_protocol=http'
 ```
 
+### Adding ssh public key to Jenkins configuration automatically
+
+If you want ansible playbook to deal with adding ssh public key to Jenkins configuration page for you, you can enable it
+by specifying following environment variable
+
+```
+-e "add_public_key_automatically=true"
+```
+
+**:warning: Warning** This will replace the current value of `SSH Public Keys` in user's configuration page, so it is advised to use this option only if there is no public key already set. 
+
+Following configuration details are also replaced by the default values: `"Full Name": "Jenkins Admin"`, `"Description":""`
+
 ### Execute the playbook:
 
 #### Example command line to execute aerogear digger ansible install
