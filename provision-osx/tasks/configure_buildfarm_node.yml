@@ -67,7 +67,7 @@
 
   -
     name: Create credential
-    shell: cat /tmp/create-credential.xml | java -jar /tmp/jenkins-cli.jar -remoting -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }} create-credentials-by-xml system::system::jenkins _
+    shell: cat /tmp/create-credential.xml | java -jar /tmp/jenkins-cli.jar  -i {{ jenkins_private_key_path | default('~/.ssh/id_rsa') }} -remoting -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }} create-credentials-by-xml system::system::jenkins _
     args:
       executable: /bin/bash
     register: create_credential
@@ -76,7 +76,7 @@
 
   -
     name: Update credential
-    shell: "cat /tmp/create-credential.xml | java -jar /tmp/jenkins-cli.jar -remoting -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }} update-credentials-by-xml system::system::jenkins _ {{ buildfarm_credential_id }}"
+    shell: "cat /tmp/create-credential.xml | java -jar /tmp/jenkins-cli.jar -i {{ jenkins_private_key_path | default('~/.ssh/id_rsa') }} -remoting -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }} update-credentials-by-xml system::system::jenkins _ {{ buildfarm_credential_id }}"
     args:
       executable: /bin/bash
     register: update_credential
@@ -105,7 +105,7 @@
 
 -
   name: Create node
-  shell: cat /tmp/create-node.xml | java -jar /tmp/jenkins-cli.jar -remoting -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }} create-node
+  shell: cat /tmp/create-node.xml | java -jar /tmp/jenkins-cli.jar -i {{ jenkins_private_key_path | default('~/.ssh/id_rsa') }} -remoting -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }} create-node
   args:
     executable: /bin/bash
   register: create_node
@@ -115,7 +115,7 @@
 
 -
   name: Update node
-  shell: "cat /tmp/create-node.xml | java -jar /tmp/jenkins-cli.jar -remoting -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }} update-node '{{ buildfarm_node_name }} ({{mac_host}})'"
+  shell: "cat /tmp/create-node.xml | java -jar /tmp/jenkins-cli.jar -i {{ jenkins_private_key_path | default('~/.ssh/id_rsa') }} -remoting -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }} update-node '{{ buildfarm_node_name }} ({{mac_host}})'"
   args:
     executable: /bin/bash
   register: create_node
