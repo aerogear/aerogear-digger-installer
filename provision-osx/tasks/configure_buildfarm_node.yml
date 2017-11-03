@@ -3,42 +3,65 @@
 - include: configure_node_env_vars.yml
 
 -
-  block:
+  name: Set node key path
+  set_fact:
+    node_key: $HOME/.ssh_jenkins/jenkins_id_rsa
 
-  -
-    name: Create a directory to store key pair
-    file:
-      path: $HOME/.ssh_jenkins
-      state: directory
-      owner: "{{ ansible_ssh_user }}"
-      mode: 0700
+-
+  name: Create a directory to store key pair
+  file:
+    path: $HOME/.ssh_jenkins
+    state: directory
+    owner: "{{ ansible_ssh_user }}"
+    mode: 0700
+
+-
+  block:
   -
     name: Generate SSH key pair for Jenkins
     command: ssh-keygen -t rsa -f {{ ansible_env.HOME }}/.ssh_jenkins/jenkins_id_rsa -N "{{ credential_passphrase | default('') }}"
     args:
-      creates: "{{ ansible_env.HOME }}/.ssh_jenkins/jenkins_id_rsa"
-
-  -
-    name: Output generated private key
-    command: cat {{ ansible_env.HOME }}/.ssh_jenkins/jenkins_id_rsa
-    register: private_key
-    changed_when: False
-
-  -
-    name: Ouput generated public key
-    command: cat $HOME/.ssh_jenkins/jenkins_id_rsa.pub
-    register: public_key
-    changed_when: False
-
-  -
-    name: Set credential_private_key and credential_passphrase
-    set_fact:
-      credential_private_key: "{{ private_key.stdout }}"
-      credential_public_key: "{{ public_key.stdout }}"
+      creates: "{{ node_key }}"
+    when: (credential_private_key is undefined) and (credential_public_key is undefined)
   run_once: true
   when:
     - (credential_private_key is undefined) or (credential_public_key is undefined)
 
+-
+  name: Upload ssh keys to node
+  copy:
+    src: "{{ item }}"
+    dest: "~/.ssh_jenkins/{{ item.split('/')[-1:][0] }}"
+    force: yes
+    mode: 0600
+  with_items:
+    - "{{ credential_private_key }}"
+    - "{{ credential_public_key }}"
+  when: credential_private_key is defined and credential_public_key is defined
+
+
+- name: Update node key path
+  set_fact:
+    node_key: "~/.ssh_jenkins/{{ credential_private_key.split('/')[-1:][0] }}"
+  when: credential_private_key is defined and credential_public_key is defined
+
+-
+  name: Output generated private key
+  command: "cat {{ node_key }}" 
+  register: private_key
+  changed_when: False
+
+-
+  name: Ouput generated public key
+  command: "cat {{ node_key }}.pub"
+  register: public_key
+  changed_when: False
+
+-
+  name: Set credential_private_key and credential_passphrase
+  set_fact:
+    credential_private_key: "{{ private_key.stdout }}"
+    credential_public_key: "{{ public_key.stdout }}"
 
 -
   name: Get jenkins url
