@@ -23,7 +23,6 @@
     args:
       creates: "{{ node_key }}"
     when: (credential_private_key is undefined) and (credential_public_key is undefined)
-  run_once: true
   when:
     - (credential_private_key is undefined) or (credential_public_key is undefined)
 
@@ -104,7 +103,6 @@
       executable: /bin/bash
     register: update_credential
     when: create_credential.rc != 0 and create_credential.stderr.find('No change') >= 0
-  run_once: true
   delegate_to: "{{ groups['master'][0] }}"
 
 -
