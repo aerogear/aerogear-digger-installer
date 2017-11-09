@@ -48,6 +48,14 @@ this case.
  '-e jenkins_route_protocol=http'
 ```
 
+### Overriding public and private keys for Jenkins
+
+If you want to override the public and private keys used for Jenkins cli calls, pass the following variables (defaults to ~/.ssh/id_rsa.pub & ~/.ssh/id_rsa).
+
+```
+ '-e jenkins_public_key_path'  '-e jenkins_private_key_path'
+```
+
 ### Adding ssh public key to Jenkins configuration automatically
 
 If you want ansible playbook to deal with adding ssh public key to Jenkins configuration page for you, you can enable it
