@@ -18,11 +18,44 @@
 -
   block:
   -
+    name: Check if auto generated key exists
+    stat:
+      path: $HOME/.ssh_jenkins/jenkins_id_rsa
+    register: auto_gen_key
+    delegate_to: "{{ groups['master'][0] }}"
+
+  -
+    name: Check if auto generated public key exists
+    stat:
+      path: $HOME/.ssh_jenkins/jenkins_id_rsa.pub
+    register: auto_gen_pkey
+    delegate_to: "{{ groups['master'][0] }}"
+
+  -
+    name: Set fact if both private and public key exists
+    set_fact:
+      has_gen_keys: yes
+    when: auto_gen_key.stat.exists == False and auto_gen_pkey.stat.exists == False
+
+  -
     name: Generate SSH key pair for Jenkins
     command: ssh-keygen -t rsa -f {{ ansible_env.HOME }}/.ssh_jenkins/jenkins_id_rsa -N "{{ credential_passphrase | default('') }}"
     args:
       creates: "{{ node_key }}"
-    when: (credential_private_key is undefined) and (credential_public_key is undefined)
+    when: has_gen_keys is undefined
+    delegate_to: "{{ groups['master'][0] }}"
+
+  -
+    name: Upload ssh keys to node
+    copy:
+      src: "{{ item }}"
+      dest: "~/.ssh_jenkins/{{ item.split('/')[-1:][0] }}"
+      force: yes
+      mode: 0600
+    with_items:
+      - $HOME/.ssh_jenkins/jenkins_id_rsa
+      - $HOME/.ssh_jenkins/jenkins_id_rsa.pub
+    delegate_to: "{{ groups['master'][0] }}"
   when:
     - (credential_private_key is undefined) or (credential_public_key is undefined)
 
