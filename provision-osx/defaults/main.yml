@@ -2,6 +2,8 @@
 
 # This file should not be modified by and end user.
 
+macos_user: jenkins
+
 remote_tmp_dir: /tmp
 
 ruby_domain_name_file_path: ruby_domain_name/domain_name-0.5.99999999.gem
@@ -67,7 +69,7 @@ apple_wwdr_cert_file_name: AppleWWDRCA.cer
 
 buildfarm_node_port: 22
 
-buildfarm_node_root_dir: "/Users/jenkins"
+buildfarm_node_root_dir: "/Users/{{macos_user}}"
 
 buildfarm_credential_id: macOS_buildfarm_cred
 

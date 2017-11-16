@@ -4,7 +4,7 @@ project_name: digger
 
 jenkins_home: /var/lib/jenkins
 
-concurrent_android_builds: 10
+concurrent_android_builds: 5
 
 # List of plugins required and their dependencies. Note, we don't need to support dependencies for
 # kubernetes plugin since these will be packaged
