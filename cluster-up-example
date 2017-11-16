@@ -11,6 +11,12 @@ master_url='https://localhost:8443'
 oc_user=developer
 oc_password=developer
 
+# OpenShift project name.
+project_name=digger
+
+# The protocol of the Jenkins server. Default value is `https` but for local development we use http
+jenkins_route_protocol=http
+
 #Digger Variables
 digger_platforms="android,ios"
 #proxy_host=https://myproxy.com

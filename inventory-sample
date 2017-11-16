@@ -8,6 +8,11 @@ master_url=
 # OpenShift Credentials
 oc_user=
 oc_password=
+# OpenShift project name.
+project_name=digger
+
+# The protocol of the Jenkins server. Default value is `https`
+jenkins_route_protocol=https
 
 # provide proxy info if required
 proxy_host=
@@ -17,12 +22,6 @@ proxy_pass=
 proxy_protocol=http
 
 # Optional variables. Uncomment those to provide overrides.
-
-# Specify the project name. Default value is `digger`
-# project_name=
-
-# The protocol of the Jenkins server. Default value is `https`
-# jenkins_route_protocol=
 
 # The maximum number of concurrent builds for Android. Default is `5`
 # concurrent_android_builds=

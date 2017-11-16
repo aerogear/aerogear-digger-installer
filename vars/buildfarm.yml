@@ -23,14 +23,3 @@ deployments:
     containers:
     - name: "nagios"
       image: "docker.io/aerogear/digger-nagios:v1.0"
-# the Jenkins username
-macos_user: jenkins
-
-# The following fields can be changed
-
-# the name of the project in OpenShift. Feel free to change this.
-project_name: digger
-# the protocol of the Jenkins server
-jenkins_route_protocol: https
-# max number of concurrent Android builds that are allowed
-concurrent_android_builds: 5
