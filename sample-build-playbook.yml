@@ -1,12 +1,5 @@
 ---
 
-- name: "Run initial minimum requirement checks"
-  hosts: master
-  tasks:
-  remote_user: root
-  roles:
-    - {role: java, tags: install-java}
-
 - name: "Deploy Digger"
   hosts: master
   remote_user: root
