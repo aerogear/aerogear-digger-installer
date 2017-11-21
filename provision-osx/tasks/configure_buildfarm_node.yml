@@ -117,6 +117,7 @@
       executable: /bin/bash
     register: update_credential
     when: create_credential.rc != 0 and create_credential.stderr.find('No change') >= 0
+  run_once: true
   delegate_to: "{{ groups['master'][0] }}"
 
 -
