@@ -1,1 +1,20 @@
 ---
+-
+  name: Prompt to proceed with jenkins restart
+  pause:
+    prompt: |
+      Make sure no critical builds are running in jenkins and press Enter to proceed with jenkins restart.
+  listen: "restart jenkins"
+  run_once: True
+
+-
+  name: Restart jenkins
+  shell: java -jar /tmp/jenkins-cli.jar -remoting -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }} restart
+  args:
+    executable: /bin/bash
+  register: jenkins_restarted
+  failed_when: jenkins_restarted.rc != 0 and jenkins_restarted.stderr.find('NullPointerException') == -1 # JENKINS-44769
+  delegate_to: "{{ groups['master'][0] }}"
+  run_once: True
+  listen: "restart jenkins"
+  

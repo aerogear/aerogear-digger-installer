@@ -149,6 +149,7 @@
   failed_when: create_node.rc != 0 and create_node.stderr.find('already exists') == -1
   changed_when: create_node.rc == 0
   delegate_to: "{{ groups['master'][0] }}"
+  notify: restart jenkins
 
 -
   name: Update node
