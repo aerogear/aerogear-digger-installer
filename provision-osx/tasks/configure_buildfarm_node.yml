@@ -135,13 +135,14 @@
   name: Create node config from template
   template:
     src: create-node.xml.j2
-    dest: "/tmp/create-node.xml"
+    dest: "/tmp/create-node-{{ 10000 | random }}.xml"
     force: yes
   delegate_to: "{{ groups['master'][0] }}"
+  register: node_config_file
 
 -
   name: Create node
-  shell: cat /tmp/create-node.xml | java -jar /tmp/jenkins-cli.jar -i {{ jenkins_private_key_path | default(ansible_env.HOME + '/.ssh/id_rsa') }} -remoting -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }} create-node
+  shell: cat {{ node_config_file.dest }} | java -jar /tmp/jenkins-cli.jar -remoting -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }} create-node
   args:
     executable: /bin/bash
   register: create_node
