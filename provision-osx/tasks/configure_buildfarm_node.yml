@@ -6,39 +6,75 @@
   block:
 
   -
+    name: Set node key path
+    set_fact:
+      node_key: $HOME/.ssh_jenkins/jenkins_id_rsa
+      
+  -
     name: Create a directory to store key pair
     file:
       path: $HOME/.ssh_jenkins
       state: directory
       owner: "{{ ansible_ssh_user }}"
       mode: 0700
+
+  -
+    name: Check if auto generated key exists
+    stat:
+      path: $HOME/.ssh_jenkins/jenkins_id_rsa
+    register: auto_gen_key
+
+  -
+    name: Check if auto generated public key exists
+    stat:
+      path: $HOME/.ssh_jenkins/jenkins_id_rsa.pub
+    register: auto_gen_pkey
+
   -
     name: Generate SSH key pair for Jenkins
     command: ssh-keygen -t rsa -f {{ ansible_env.HOME }}/.ssh_jenkins/jenkins_id_rsa -N "{{ credential_passphrase | default('') }}"
     args:
-      creates: "{{ ansible_env.HOME }}/.ssh_jenkins/jenkins_id_rsa"
+      creates: "{{ node_key }}"
+    when: auto_gen_key.stat.exists == False and auto_gen_pkey.stat.exists == False
+
+  -
+    name: Upload ssh keys to node
+    copy:
+      src: "{{ item }}"
+      dest: "~/.ssh_jenkins/{{ item.split('/')[-1:][0] }}"
+      force: yes
+      mode: 0600
+    with_items:
+      - "{{ credential_private_key }}"
+      - "{{ credential_public_key }}"
+    when: credential_private_key is defined and credential_public_key is defined
+    
+  - name: Update node key path
+    set_fact:
+      node_key: "~/.ssh_jenkins/{{ credential_private_key.split('/')[-1:][0] }}"
+    when: credential_private_key is defined and credential_public_key is defined
 
   -
     name: Output generated private key
-    command: cat {{ ansible_env.HOME }}/.ssh_jenkins/jenkins_id_rsa
+    command: "cat {{ node_key }}" 
     register: private_key
     changed_when: False
 
   -
     name: Ouput generated public key
-    command: cat $HOME/.ssh_jenkins/jenkins_id_rsa.pub
+    command: "cat {{ node_key }}.pub"
     register: public_key
     changed_when: False
+      
+  delegate_to: "{{ groups['master'][0] }}"
+  run_once: True
+  #block end
 
-  -
-    name: Set credential_private_key and credential_passphrase
-    set_fact:
-      credential_private_key: "{{ private_key.stdout }}"
-      credential_public_key: "{{ public_key.stdout }}"
-  run_once: true
-  when:
-    - (credential_private_key is undefined) or (credential_public_key is undefined)
-
+-
+  name: Set credential_private_key and credential_public_key
+  set_fact:
+    credential_private_key: "{{ private_key.stdout }}"
+    credential_public_key: "{{ public_key.stdout }}"
 
 -
   name: Get jenkins url
@@ -99,19 +135,21 @@
   name: Create node config from template
   template:
     src: create-node.xml.j2
-    dest: "/tmp/create-node.xml"
+    dest: "/tmp/create-node-{{ 10000 | random }}.xml"
     force: yes
   delegate_to: "{{ groups['master'][0] }}"
+  register: node_config_file
 
 -
   name: Create node
-  shell: cat /tmp/create-node.xml | java -jar /tmp/jenkins-cli.jar -i {{ jenkins_private_key_path | default(ansible_env.HOME + '/.ssh/id_rsa') }} -remoting -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }} create-node
+  shell: cat {{ node_config_file.dest }} | java -jar /tmp/jenkins-cli.jar -remoting -s {{ jenkins_route_protocol | default('https') }}://{{ route_output.stdout }} create-node
   args:
     executable: /bin/bash
   register: create_node
   failed_when: create_node.rc != 0 and create_node.stderr.find('already exists') == -1
   changed_when: create_node.rc == 0
   delegate_to: "{{ groups['master'][0] }}"
+  notify: restart jenkins
 
 -
   name: Update node
