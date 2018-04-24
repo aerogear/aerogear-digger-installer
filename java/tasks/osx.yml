@@ -2,8 +2,8 @@
 
 -
   set_fact:
-    volume_path: "/Volumes/JDK {{ osx_jdk_ver }} Update {{ osx_jdk_patch }}"
-    pkg_path: "/Volumes/JDK {{ osx_jdk_ver }} Update {{ osx_jdk_patch }}/JDK {{ osx_jdk_ver }} Update {{ osx_jdk_patch }}.pkg"
+    volume_path: "/Volumes/JDK {{ osx_jdk_ver }} Update {{ osx_jdk_minor_ver }}"
+    pkg_path: "/Volumes/JDK {{ osx_jdk_ver }} Update {{ osx_jdk_minor_ver }}/JDK {{ osx_jdk_ver }} Update {{ osx_jdk_minor_ver }}.pkg"
 
 -
   name: Check java installation

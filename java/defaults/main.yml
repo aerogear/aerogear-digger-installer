@@ -7,10 +7,10 @@ openjdk_packages:
   - "java-{{ java_version }}-openjdk-devel"
 
 osx_jdk_ver: 8
-osx_jdk_minor_ver: 152
-osx_jdk_patch: b16
-osx_jdk_hash: aa0333dd3019491ca4f6ddbe78cdb6d0
-osx_jdk_str: "{{ osx_jdk_ver }}u{{ osx_jdk_patch }}-{{ osx_jdk_patch }}"
-osx_jdk_req_url: "http://download.oracle.com/otn-pub/java/jdk/{{ osx_jdk_str }}/{{ osx_jdk_hash }}/jdk-{{ osx_jdk_str }}-macosx-x64.dmg"
+osx_jdk_minor_ver: 162
+osx_jdk_patch: b12
+osx_jdk_hash: 0da788060d494f5095bf8624735fa2f1
+osx_jdk_str: "{{ osx_jdk_ver }}u{{ osx_jdk_minor_ver }}"
+osx_jdk_req_url: "http://download.oracle.com/otn-pub/java/jdk/{{ osx_jdk_str }}-{{ osx_jdk_patch }}/{{ osx_jdk_hash }}/jdk-{{ osx_jdk_str }}-macosx-x64.dmg"
 osx_jdk_req_headers: "Cookie:gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie"
 osx_jdk_archive_path: /tmp/jdk.dmg
