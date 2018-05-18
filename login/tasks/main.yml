@@ -14,6 +14,12 @@
   name: "Login as user using the OpenShift command line tool"
   command: 'oc login {{ login_url | default("https://localhost:8443") }} --username={{ oc_user }} --password="{{ oc_password }}" {{ skip_tls | default("false") | bool | ternary("--insecure-skip-tls-verify"," ") }}'
   register: output
+  when: oc_token is not defined
+-
+  name: "Login as user via the OpenShift command line tool using token"
+  command: 'oc login {{ login_url | default("https://localhost:8443") }} --token={{ oc_token }} {{ skip_tls | default("false") | bool | ternary("--insecure-skip-tls-verify"," ") }}'
+  register: output
+  when: oc_token is defined
 -
   debug: var=output
   when: output|failed
